@@ -4,32 +4,13 @@
   "installCommand": "npm install",
   "framework": "vite",
   "outputDirectory": "dist",
-  "env": [
-    {
-      "key": "VITE_LLM_PROVIDER",
-      "description": "LLM Provider: 'mock' (free) or 'byok' (bring your own key)",
-      "value": "mock"
-    },
-    {
-      "key": "VITE_BYOK_API_BASE_URL",
-      "description": "BYOK API base URL (e.g., https://api.deepseek.com/v1)",
-      "value": ""
-    },
-    {
-      "key": "VITE_BYOK_API_KEY",
-      "description": "BYOK API key (optional at build time)",
-      "value": ""
-    },
-    {
-      "key": "VITE_BYOK_MODEL",
-      "description": "BYOK model name (e.g., deepseek-chat)",
-      "value": ""
-    }
-  ],
+  "env": {
+    "VITE_LLM_PROVIDER": "mock"
+  },
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/index.html"
+      "destination": "/"
     }
   ]
 }
