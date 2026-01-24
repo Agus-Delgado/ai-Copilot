@@ -28,7 +28,11 @@ describe("URL state load/share", () => {
       writable: true,
       value: { writeText: vi.fn().mockResolvedValue(undefined) },
     });
-    vi.spyOn(window, "alert").mockImplementation(() => undefined);
+    Object.defineProperty(window, "alert", {
+      configurable: true,
+      writable: true,
+      value: vi.fn(),
+    });
   });
 
   afterEach(() => {
