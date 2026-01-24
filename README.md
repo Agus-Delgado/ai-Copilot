@@ -419,10 +419,10 @@ Este proyecto está bajo licencia **MIT**. Ver archivo `LICENSE` para detalles.
 
 ## 📞 Contacto y soporte
 
-- 📧 Email: [tu.email@example.com]
-- 🐙 GitHub: [@tu-usuario](https://github.com/tu-usuario)
-- 💼 LinkedIn: [tu-perfil](https://linkedin.com/in/tu-perfil)
-- 🌐 Portfolio: [tu-sitio.com](https://tu-sitio.com)
+- 📧 Email: augusto.delgado00@hotmail.com
+- 🐙 GitHub: https://github.com/Agus-Delgado
+- 💼 LinkedIn: https://www.linkedin.com/in/agustin-delgado-data98615190/
+- 🌐 Portfolio: https://portfolio-virid-alpha-97.vercel.app/
 
 ---
 
