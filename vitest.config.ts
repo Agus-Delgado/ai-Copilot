@@ -6,7 +6,17 @@ export default defineConfig({
   plugins: [react()],
   test: {
     globals: true,
-    environment: 'jsdom',
+    environment: 'happy-dom',
+    environmentMatchGlobs: [
+      ['tests/schemas.test.ts', 'node'],
+      ['tests/generator.test.ts', 'node'],
+      ['tests/export.test.ts', 'node'],
+      ['tests/guardrails.test.ts', 'node'],
+      ['tests/errors.test.ts', 'node'],
+      ['tests/briefTemplates.test.ts', 'node'],
+      ['tests/templates.test.ts', 'node'],
+    ],
+     pool: 'threads',
     setupFiles: [],
     coverage: {
       provider: 'v8',
