@@ -291,8 +291,7 @@ export const App: React.FC = () => {
 
         {/* Right panel - Output */}
         <section className={`panel panel--output ${isNarrow && activePanel !== "output" ? "panel--hidden" : ""}`}>
-          <h2 className="section-title">Output</h2>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.75rem" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.75rem", marginBottom: "var(--space-16)" }}>
             <h2 className="section-title" style={{ margin: 0 }}>
               Output
             </h2>
