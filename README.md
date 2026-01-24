@@ -1,5 +1,7 @@
 # AI Delivery Copilot
 
+[![CI](https://github.com/Agus-Delgado/ai-delivery-copilot/actions/workflows/ci.yml/badge.svg)](https://github.com/Agus-Delgado/ai-delivery-copilot/actions/workflows/ci.yml)
+
 > Generador inteligente de artefactos de entrega. Transforma briefs desestructurados en documentación profesional con validación automática y reparación de esquemas. **Costo cero, sin backend, 100% estático.**
 
 ---
@@ -29,16 +31,58 @@
 
 ---
 
+## 🚀 Quick Start (sin API keys requeridas)
+
+### 1️⃣ Demo Mode: Genera artefactos al instante
+- **Sin costo.** Runs entirely client-side con fixtures locales.
+- Toggle **"Demo mode"** en el header.
+- Selecciona un tipo de artefacto (PRD, Backlog, etc.).
+- Haz clic en un **Quick Brief** template o escribe tu propio brief.
+- Haz clic en **"Generate"** → obtén JSON/Markdown al instante.
+
+### 2️⃣ Quick Briefs: Plantillas precargadas para acelerar onboarding
+- **SaaS RBAC PRD**, **Mobile Feedback Backlog**, **E2E QA Pack**, etc.
+- Un clic → pre-fill brief + selecciona artifact type automáticamente.
+- Edita después si quieres personalizarlo.
+
+### 3️⃣ BYOK: Integración opcional con tu LLM
+- Si quieres generar con **tu propio modelo** (OpenAI, Deepseek, local):
+  - Haz clic en **"⚙ Provider: Mock"** → configura BYOK.
+  - Pega tu API key y modelo endpoint.
+  - Cambia a **"BYOK"** y genera como de costumbre.
+- **Tu API key nunca sale de tu navegador** (sessionStorage, sin cifrado a nivel navegador).
+
+### 4️⃣ History: Gestiona tus generaciones
+- **Haz clic en "📋 History"** en el header para ver todas tus generaciones.
+- **View**: carga un artefacto anterior sin regenerar.
+- **Re-run**: regenera con los mismos inputs.
+- **Delete** / **Clear all**: gestiona tu historial.
+- **Storage privacy**: toggle "Store outputs" para guardar solo inputs (no outputs).
+- Auto-limpia a los 20 más recientes; historial persiste en tu navegador.
+
+### 5️⃣ Share: Colabora sin backend
+- **Haz clic en "Share link"** en Output para copiar una URL preconfigurada.
+- URL incluye: artifactType + brief + tab + demo flag.
+- **Sin secretos:** API keys nunca se incluyen en la URL.
+- Abre el link en otro navegador/dispositivo → se cargan todos los parámetros automáticamente.
+- Si el brief es muy largo para una URL segura, se excluye automáticamente.
+
+---
+
 ## ✨ Features principales
 
 - **5 tipos de artefactos** con esquemas JSON validados mediante Zod
 - **Generador con repair loop automático**: reintentos inteligentes (hasta 2) si la validación falla
-- **Modo Mock gratuito**: respuestas determinísticas, sin API keys, ideal para desarrollo y demos
+- **Demo Mode**: generación en cliente con fixtures locales, sin API keys ni costo
+- **Quick Briefs**: plantillas precargadas para acelerar onboarding
+- **Local History**: guarda últimas 20 generaciones, búsqueda, View/Re-run/Delete
+- **Shareable Links**: URL state sin secretos; preload app con brief + artifact type + demo flag
+- **Privacy toggle**: solo almacena inputs o inputs+outputs según preferencia
 - **BYOK (Bring Your Own Key)**: integración con cualquier proveedor OpenAI-compatible (OpenAI, Deepseek, local LLM)
 - **Exportación dual**: JSON estructurado + Markdown formateado por tipo
-- **UI minimalista funcional**: 5 componentes React, layout 2-columnas, modal de configuración
-- **3 demos precargados**: SaaS RBAC, Mobile Feedback App, Internal Reporting Tool
-- **Testing completo**: Vitest con 22 tests (apiKeyStorage, schemas, generator, export)
+- **UI minimalista funcional**: responsive 2-columnas, pestañas móviles, modal de configuración
+- **Accesibilidad**: tabs con ARIA semantics, focus-visible rings, keyboard navigation
+- **Testing completo**: Vitest con 35 tests (fixtures, history, history, a11y, URL state, etc.)
 - **100% estático**: deployable a Netlify, Vercel, GitHub Pages sin backend
 - **TypeScript stricto**: compilación sin errores, type-safe end-to-end
 
@@ -50,54 +94,123 @@
 
 - Generación de 5 tipos de artefactos con validación completa
 - Orquestación de generación con reintentos automáticos
-- Interfaz web responsiva para entrada y visualización
+- Interfaz web responsiva con tabs móviles y pestañas de acceso
 - Sistema de exportación (JSON + Markdown)
-- Dos proveedores LLM (Mock + BYOK)
-- Suite de tests unitarios y de integración
+- **Demo Mode**: generación en cliente con fixtures locales, sin API keys ni costo
+- **Quick Briefs**: plantillas precargadas para acelerar onboarding
+- **Local History**: max 20 items, búsqueda, View/Re-run/Delete/Clear
+- **Privacy toggle**: opción de almacenar solo inputs
+- BYOK (Bring Your Own Key): dos proveedores LLM (Mock + BYOK)
+- Suite de tests unitarios y RTL (35 tests)
 - API keys en sessionStorage/localStorage (usuario configura en UI, sin cifrado a nivel navegador)
 - Manejo de errores con sugerencias contextuales
 - Cancelación de requests (AbortController)
+- Semántica ARIA + keyboard navigation para accesibilidad
+
 
 ### ❌ No incluye
 
-- Backend o base de datos
+- Backend o base de datos (todo localStorage, sin servidor)
 - Autenticación / multi-usuario
 - Control de versiones de artefactos
 - Colaboración en tiempo real
-- Histórico persistente de generaciones
+- Histórico en la nube (solo local)
 - CLI o integración en CI/CD
 - Soporte para otras plataformas LLM (p.ej., Anthropic, Google)
 
 ---
 
-## 🏗️ Arquitectura
+## � Release Notes & Changelog
 
+### v0.5 - Validation Guardrails + Error UX (Current)
+- **Typed error system**: ValidationError and ProviderError classes for structured error handling
+- **Guardrails validation**: Per-artifact-type field requirements in prompts
+- **Error recovery**: Actionable error messages for API key, JSON, timeout, CORS, and model output failures
+- **Prompt debug panel**: View prompts and raw outputs for troubleshooting
+- **Repair loop**: Auto-retry on validation failures (up to 3 attempts)
+- **71 unit tests**: Full coverage of error flows and guardrails
+
+### v0.4 - Share Links & URL State
+- **Shareable URLs**: Safe URL encoding with 2000-char brief limit
+- **URL state persistence**: Artifact type, brief, tab, demo mode in params
+- **URL validation**: Silent fallbacks for malformed input
+- **15 utility tests**: Roundtrip validation of URL encode/decode
+
+### v0.3 - Local History & Re-run
+- **History panel**: View, re-run, delete, or clear past generations
+- **Storage caps**: 20-item history limit + 200KB max size (auto-eviction)
+- **Privacy toggle**: Option to store inputs only (no outputs)
+- **Header integration**: "📋 History (N)" button with toggle state
+
+### v0.2 - Demo Mode & Quick Briefs
+- **Mock provider**: 5 artifact types with realistic portfolio-grade fixtures
+- **Quick briefs**: Pre-filled templates for rapid onboarding
+- **Demo persistence**: Demo mode state saved to localStorage
+- **Test coverage**: 6 tests validating demo and template logic
+
+### v0.1 - UX Rhythm & Design System
+- **CSS design tokens**: Spacing, colors, typography, radius, shadow
+- **Responsive tabs**: Mobile-first layout with arrow key navigation
+- **ARIA semantics**: Full keyboard + screen reader accessibility
+- **Tab styling**: .ov-tabs and .ov-tab scoped components (no global changes)
+- **Accessibility tests**: 3 tests for tab semantics and keyboard nav
+
+### v0.0 - MVP Foundation
+- **Zero-cost baseline**: Lint, format, build, test scripts
+- **CI workflow**: Node 18/20 matrix with caching and concurrency
+- **ESLint + Prettier**: Code quality and formatting
+- **Vitest setup**: 35+ unit and RTL tests
+
+---
+
+## �🏗️ Arquitectura
+### Arquitectura de datos: Mock → Validation → Export
+
+**AI Delivery Copilot** está construido alrededor de tres pilares principales:
+
+1. **Mock & Demo Mode**: Cliente completo sin backend
+   - MockProvider genera artefactos usando fixtures locales (PRD, Backlog, QAPack, RiskRegister, CriticReport)
+   - BYOK (Bring Your Own Key) acepta OpenAI o endpoints compatibles
+   - API keys almacenadas en sessionStorage (no en URL, no en historial)
+
+2. **Validation & Repair Loop**: Guardrails automáticos
+   - Prompts incluyen requisitos por tipo de artefacto
+   - Zod valida JSON contra esquemas estrictos
+   - En error: auto-retry hasta 3 intentos con repair prompt
+   - Errores estructurados (ValidationError, ProviderError) con recovery hints
+
+3. **Local History & Export**: Persistencia y portabilidad
+   - LocalStorage almacena últimas 20 generaciones + 200KB máximo
+   - Privacy toggle: inputs-only mode (sin outputs sensibles)
+   - Exporta a JSON (raw) o Markdown (formateado)
+   - Shareable URLs codifican estado sin exponer secretos
 ### Flujo de datos
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                       Brief Input (UI)                          │
-│                   (ArtifactSelector, BriefInput)                │
+│        (ArtifactSelector, BriefInput, Quick Briefs)             │
 └────────────────────────┬────────────────────────────────────────┘
                          │
                          ▼
          ┌───────────────────────────────┐
          │    generateArtifact()         │
          │   (Generator Orchestrator)    │
-         │  + Retry Loop (max 2)         │
+         │  + Retry Loop (max 3)         │
          └────────┬────────────┬─────────┘
                   │            │
         ┌─────────▼──┐  ┌──────▼────────┐
         │ Prompt     │  │ LLM Provider  │
         │ Builder    │  │ Factory       │
-        └────────────┘  ├─ Mock         │
-                        ├─ BYOK         │
-                        └─ (OpenAI-API)│
+        │ (Guardrails)│ ├─ Mock         │
+        └────────────┘  ├─ BYOK         │
+                        └─ OpenAI-compat│
                              │
                          ┌───▼──────────────────┐
                          │  JSON Extraction &   │
                          │  Zod Validation      │
                          │  (Repair on error)   │
+                         │  TypeError handling  │
                          └───┬──────────────────┘
                              │
                         ┌────▼────────────┐
@@ -111,10 +224,11 @@
               ├─ toJson() (raw)             │
               └────┬─────────────────────────┘
                    │
-            ┌──────▼──────────────┐
-            │  Output Viewer (UI) │
-            │  (Tabs, Copy, Dwn)  │
-            └─────────────────────┘
+        ┌──────────┴────────────────────┐
+        ▼                               ▼
+   Output Viewer              History + Share URLs
+   (Tabs, Copy, Dwn)          (Store 20 items)
+   (Debug panel)              (Privacy toggle)
 ```
 
 ### Componentes clave
@@ -509,6 +623,23 @@ Este proyecto está bajo licencia **MIT**. Ver archivo `LICENSE` para detalles.
 
 ---
 
-**Última actualización:** Enero 23, 2026  
-**Versión:** 0.1.0 (MVP)  
-**Status:** ✅ Production-Ready
+**Última actualización:** Enero 24, 2026  
+**Versión:** 0.5.0 (Feature Complete MVP)  
+**Status:** ✅ Production-Ready (71 tests, CI hardened, zero-cost)
+**Node Support:** 18 LTS, 20 LTS (tested in CI)
+
+---
+
+## 🏷️ Suggested Release Tags
+
+For portfolio and version tracking:
+
+```
+v0.1  = Baseline: Lint, format, tests, CI setup
+v0.2  = Demo mode: Mock provider, quick briefs  
+v0.3  = History: Local persistence, re-run, privacy toggle
+v0.4  = Share: URL state encoding, safe links
+v0.5  = Validation: Guardrails, error UX, prompt debug (current)
+v1.0  = (Future) Additional providers (Anthropic, Google)
+```
+

@@ -1,4 +1,5 @@
 import React from "react";
+import "./OutputViewer.css";
 import { toMarkdown, toJson } from "../lib/export/markdownExport";
 import type { Artifact } from "../lib/schemas/artifacts";
 
@@ -64,46 +65,63 @@ export const OutputViewer: React.FC<Props> = ({ artifact, error, loading, tab, o
   const mdContent = toMarkdown(artifact);
   const currentContent = tab === "json" ? jsonContent : mdContent;
   const hasOutput = Boolean(currentContent?.trim());
+  const activePanelId = tab === "json" ? "ov-panel-json" : "ov-panel-markdown";
+  const activeTabId = tab === "json" ? "ov-tab-json" : "ov-tab-markdown";
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-      <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem", borderBottom: "1px solid #ddd" }}>
+      <div
+        className="ov-tabs"
+        role="tablist"
+        aria-label="Output format tabs"
+        onKeyDown={(e) => {
+          if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+            const next = tab === "json" ? "markdown" : "json";
+            onTabChange(next as "json" | "markdown");
+            const el = document.getElementById(next === "json" ? "ov-tab-json" : "ov-tab-markdown");
+            el?.focus();
+            e.preventDefault();
+          }
+        }}
+      >
         <button
+          id="ov-tab-json"
+          aria-controls="ov-panel-json"
           onClick={() => onTabChange("json")}
-          style={{
-            padding: "0.5rem 1rem",
-            backgroundColor: tab === "json" ? "#0066cc" : "#f0f0f0",
-            color: tab === "json" ? "white" : "black",
-            border: "none",
-            borderRadius: "4px 4px 0 0",
-            cursor: "pointer",
-            fontWeight: "bold",
-          }}
+          role="tab"
+          aria-selected={tab === "json"}
+          className="ov-tab"
         >
           JSON
         </button>
         <button
+          id="ov-tab-markdown"
+          aria-controls="ov-panel-markdown"
           onClick={() => onTabChange("markdown")}
-          style={{
-            padding: "0.5rem 1rem",
-            backgroundColor: tab === "markdown" ? "#0066cc" : "#f0f0f0",
-            color: tab === "markdown" ? "white" : "black",
-            border: "none",
-            borderRadius: "4px 4px 0 0",
-            cursor: "pointer",
-            fontWeight: "bold",
-          }}
+          role="tab"
+          aria-selected={tab === "markdown"}
+          className="ov-tab"
         >
           Markdown
         </button>
       </div>
 
       {!hasOutput ? (
-        <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", color: "#999", marginBottom: "1rem" }}>
+        <div
+          style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", color: "#999", marginBottom: "1rem" }}
+          role="tabpanel"
+          id={activePanelId}
+          aria-labelledby={activeTabId}
+        >
           No output available
         </div>
       ) : (
-        <div style={{ flex: 1, overflow: "auto", marginBottom: "1rem", width: "100%" }}>
+        <div
+          style={{ flex: 1, overflow: "auto", marginBottom: "1rem", width: "100%" }}
+          role="tabpanel"
+          id={activePanelId}
+          aria-labelledby={activeTabId}
+        >
           <pre
             style={{
               padding: "1rem",

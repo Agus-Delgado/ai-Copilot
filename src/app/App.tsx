@@ -7,6 +7,7 @@ import { HistoryPanel } from "../components/HistoryPanel";
 import { OutputViewer } from "../components/OutputViewer";
 import { ProviderConfig } from "../components/ProviderConfig";
 import { useStore } from "../lib/store";
+import { decodeUrlState, buildShareUrl } from "../lib/urlState";
 import { generateArtifact } from "../lib/llm/generator";
 import { createProvider } from "../lib/llm/providerFactory";
 import type { ArtifactType, Artifact } from "../lib/schemas/artifacts";
@@ -20,6 +21,7 @@ export const App: React.FC = () => {
   const [promptUsed, setPromptUsed] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [configOpen, setConfigOpen] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
   const [isNarrow, setIsNarrow] = useState(false);
   const [activePanel, setActivePanel] = useState<"input" | "output">("input");
   const [outputTab, setOutputTab] = useState<"json" | "markdown">("json");
@@ -54,26 +56,21 @@ export const App: React.FC = () => {
   }, [isNarrow]);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const candidateType = params.get("artifactType");
-    const candidateBrief = params.get("brief");
-    const candidateTab = params.get("tab");
-    const candidateDemo = params.get("demo");
+    const urlState = decodeUrlState(window.location.search);
 
-    const validTypes: ArtifactType[] = ["PRD", "Backlog", "RiskRegister", "QAPack", "CriticReport"];
-    if (candidateType && (validTypes as string[]).includes(candidateType)) {
-      setArtifactType(candidateType as ArtifactType);
+    if (urlState.artifactType) {
+      setArtifactType(urlState.artifactType);
     }
 
-    if (typeof candidateBrief === "string") {
-      setBrief(candidateBrief);
+    if (urlState.brief) {
+      setBrief(urlState.brief);
     }
 
-    if (candidateTab === "json" || candidateTab === "markdown") {
-      setOutputTab(candidateTab);
+    if (urlState.tab) {
+      setOutputTab(urlState.tab);
     }
 
-    if (candidateDemo === "1") {
+    if (urlState.demo) {
       setDemoMode(true);
     }
   }, [setDemoMode]);
@@ -200,16 +197,19 @@ export const App: React.FC = () => {
   };
 
   const handleShare = async () => {
-    const params = new URLSearchParams();
-    params.set("artifactType", artifactType);
-    params.set("brief", brief);
-    params.set("tab", outputTab);
-    if (demoMode) params.set("demo", "1");
+    const { url, briefExcluded } = buildShareUrl({
+      artifactType,
+      brief,
+      tab: outputTab,
+      demo: demoMode,
+    });
 
-    const url = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
     try {
       await navigator.clipboard.writeText(url);
-      alert("Shareable link copied to clipboard");
+      const message = briefExcluded
+        ? "Shareable link copied (brief too long to include)"
+        : "Shareable link copied to clipboard";
+      alert(message);
     } catch {
       alert("Could not copy link. Please copy manually: " + url);
     }
@@ -230,6 +230,9 @@ export const App: React.FC = () => {
             />
             Demo mode
           </label>
+          <button className="header-button" onClick={() => setHistoryOpen(!historyOpen)}>
+            📋 History ({history.length})
+          </button>
         <button className="header-button" onClick={() => setConfigOpen(true)}>
           ⚙ Provider: {providerConfig.type === "mock" ? "Mock" : "BYOK"}
         </button>
@@ -239,15 +242,19 @@ export const App: React.FC = () => {
       {/* Main content */}
       <div className={`main ${isNarrow ? "main--stacked" : ""}`}>
         {isNarrow && (
-          <div className="mobile-tabs">
+          <div className="mobile-tabs" role="tablist" aria-label="Input and Output tabs">
             <button
               className={`tab-button ${activePanel === "input" ? "tab-button--active" : ""}`}
+              role="tab"
+              aria-selected={activePanel === "input"}
               onClick={() => setActivePanel("input")}
             >
               Input
             </button>
             <button
               className={`tab-button ${activePanel === "output" ? "tab-button--active" : ""}`}
+              role="tab"
+              aria-selected={activePanel === "output"}
               onClick={() => setActivePanel("output")}
             >
               Output
@@ -369,15 +376,17 @@ export const App: React.FC = () => {
             )}
           </details>
 
-          <HistoryPanel
-            history={history}
-            persistOutputs={persistOutputs}
-            onTogglePersistOutputs={setPersistOutputs}
-            onView={(entry) => handleViewHistory(entry.id)}
-            onRerun={(entry) => handleRerunHistory(entry.id)}
-            onDelete={deleteHistoryEntry}
-            onClear={clearHistory}
-          />
+          {historyOpen && (
+            <HistoryPanel
+              history={history}
+              persistOutputs={persistOutputs}
+              onTogglePersistOutputs={setPersistOutputs}
+              onView={(entry) => handleViewHistory(entry.id)}
+              onRerun={(entry) => handleRerunHistory(entry.id)}
+              onDelete={deleteHistoryEntry}
+              onClear={clearHistory}
+            />
+          )}
         </section>
       </div>
 
