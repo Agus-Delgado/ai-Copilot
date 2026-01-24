@@ -41,6 +41,8 @@ export const OutputViewer: React.FC<Props> = ({ artifact, error }) => {
 
   const jsonContent = toJson(artifact);
   const mdContent = toMarkdown(artifact);
+  const currentContent = tab === "json" ? jsonContent : mdContent;
+  const hasOutput = Boolean(currentContent?.trim());
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
@@ -75,22 +77,32 @@ export const OutputViewer: React.FC<Props> = ({ artifact, error }) => {
         </button>
       </div>
 
-      <div style={{ flex: 1, overflow: "auto", marginBottom: "1rem" }}>
-        <pre
-          style={{
-            padding: "1rem",
-            backgroundColor: "#f5f5f5",
-            borderRadius: "4px",
-            fontSize: "0.85rem",
-            fontFamily: "monospace",
-            whiteSpace: "pre-wrap",
-            wordBreak: "break-word",
-            margin: 0,
-          }}
-        >
-          {tab === "json" ? jsonContent : mdContent}
-        </pre>
-      </div>
+      {!hasOutput ? (
+        <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", color: "#999", marginBottom: "1rem" }}>
+          No output available
+        </div>
+      ) : (
+        <div style={{ flex: 1, overflow: "auto", marginBottom: "1rem", width: "100%" }}>
+          <pre
+            style={{
+              padding: "1rem",
+              backgroundColor: "#f5f5f5",
+              borderRadius: "4px",
+              fontSize: "0.85rem",
+              fontFamily: "monospace",
+              whiteSpace: "pre-wrap",
+              wordBreak: "break-word",
+              margin: 0,
+              color: "#0f172a",
+              opacity: 1,
+              width: "100%",
+              boxSizing: "border-box",
+            }}
+          >
+            {currentContent}
+          </pre>
+        </div>
+      )}
 
       <div style={{ display: "flex", gap: "0.5rem" }}>
         <button

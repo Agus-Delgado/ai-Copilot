@@ -99,7 +99,7 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100vh", backgroundColor: "#f9f9f9" }}>
+    <div style={{ display: "flex", flexDirection: "column", width: "100vw", height: "100vh", overflow: "hidden", backgroundColor: "#f1f5f9" }}>
       {/* Header */}
       <header
         style={{
