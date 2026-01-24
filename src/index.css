@@ -8,7 +8,7 @@ body,
 }
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -20,6 +20,36 @@ body,
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* Design tokens */
+  --color-text: #0f172a;
+  --color-muted: #475569;
+  --color-page: #f1f5f9;
+  --color-surface: #ffffff;
+  --color-border: #e2e8f0;
+  --color-primary: #0b63ce;
+  --color-primary-strong: #084c9c;
+  --color-primary-soft: #e6f0fb;
+  --color-danger: #e53935;
+
+  --radius-6: 6px;
+  --radius-8: 8px;
+
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-32: 32px;
+
+  --text-xs: 0.8rem;
+  --text-sm: 0.9rem;
+  --text-md: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5rem;
+
+  --shadow-soft: 0 6px 18px rgba(15, 23, 42, 0.08);
 }
 
 a {
@@ -35,7 +65,7 @@ body {
   margin: 0;
   width: 100%;
   min-height: 100vh;
-  background-color: #f1f5f9;
+  background-color: var(--color-page);
 }
 
 h1 {

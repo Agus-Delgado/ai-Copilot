@@ -158,6 +158,71 @@
 
 ## 📦 Instalación y ejecución local
 
+## 🔥 Smoke Test Checklist
+
+- Generar artefacto en modo Mock muestra output.
+- Cancelar muestra "Generation cancelled.".
+- Cambiar entre tabs JSON/Markdown funciona.
+- El panel de debug permite copiar el contenido.
+
+---
+
+## 📝 Changelog (Stages 0–6)
+
+- Stage 0 — Baseline Quality
+     - Prettier + ESLint alineados, scripts `lint`, `lint:fix`, `format`, `format:check`.
+     - CI (Node 18/20) corre `npm ci`, `npm run lint`, `npm run test`, `npm run build`.
+     - README incluye smoke checklist.
+
+- Stage 1 — Rhythm & Design System
+     - Tokens CSS en `src/index.css` (spacing, colores, tipografía, radius, shadow).
+     - Layout consistente vía clases en `src/App.css` (sin estilos globales agresivos).
+     - Responsive: <900px usa tabs Input/Output.
+     - OutputViewer muestra Loading/Empty diferenciados.
+
+- Stage 2 — Demo Mode + Quick Briefs
+     - `demoMode` en `useStore` persistido en LocalStorage, toggle en header.
+     - Quick briefs en `src/app/briefTemplates.ts` + selección desde `BriefInput`.
+     - Mensajería: si falta key BYOK sugiere activar Demo mode.
+
+- Stage 3 — Local History + Re-run
+     - Historial en `useStore` con límite N=20 y cap ~200KB, eviction de antiguos.
+     - Toggle `persistOutputs`: si off, guarda solo inputs.
+     - `HistoryPanel` con búsqueda, View/Re-run/Delete/Clear.
+
+- Stage 4 — Share Links
+     - `Share link` copia URL con `artifactType`, `brief`, `tab` y `demo` (solo inputs).
+     - Al abrir con parámetros, precarga el estado.
+     - Parser robusto: ignora inválidos sin crash.
+
+- Stage 5 — Validación + Error UX
+     - Guardrails por tipo en prompts, mensajes de error accionables.
+     - Debug muestra el `prompt` enviado y permite copiarlo.
+
+- Stage 6 — Tests + CI Hardening
+     - Tests nuevos: history, templates y URL state (RTL). Mantiene suites existentes.
+     - CI matrix Node 18/20.
+
+---
+
+## ▶️ Comandos útiles
+
+```bash
+# Lint
+npm run lint
+npm run lint:fix
+
+# Formato
+npm run format
+npm run format:check
+
+# Tests
+npm test
+
+# Build
+npm run build
+```
+
 ### Requisitos previos
 
 - **Node.js** ≥ 18.x

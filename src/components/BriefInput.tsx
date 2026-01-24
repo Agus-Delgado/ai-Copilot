@@ -1,31 +1,20 @@
-import React, { useState } from "react";
-
-const DEMO_BRIEFS = [
-  {
-    title: "SaaS RBAC",
-    content:
-      "We need to implement role-based access control for our B2B SaaS platform. Admins should be able to define custom roles with specific permissions. We also need audit logs to track sensitive actions like role changes and billing operations.",
-  },
-  {
-    title: "Mobile Feedback App",
-    content:
-      "Build a mobile app where users can submit feedback and ideas. Each submission should have a title, description, category, and user can attach images. Submissions are reviewed by moderators and marked as approved/rejected. Analytics dashboard to show trending feedback.",
-  },
-  {
-    title: "Internal Reporting Tool",
-    content:
-      "Internal tool for generating weekly business reports. Executives should be able to select metrics (revenue, users, churn, etc), date range, and export as PDF. Reports should auto-generate on schedule and email to stakeholders.",
-  },
-];
+import React, { useEffect, useState } from "react";
+import type { ArtifactType } from "../lib/schemas/artifacts";
+import { BRIEF_TEMPLATES } from "../app/briefTemplates";
 
 interface Props {
   onLoad: (content: string) => void;
   currentBrief: string;
   disabled?: boolean;
+  onTemplateSelect?: (brief: string, artifactType: ArtifactType) => void;
 }
 
-export const BriefInput: React.FC<Props> = ({ onLoad, currentBrief, disabled = false }) => {
+export const BriefInput: React.FC<Props> = ({ onLoad, currentBrief, disabled = false, onTemplateSelect }) => {
   const [brief, setBrief] = useState(currentBrief);
+
+  useEffect(() => {
+    setBrief(currentBrief);
+  }, [currentBrief]);
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setBrief(e.target.value);
@@ -34,35 +23,32 @@ export const BriefInput: React.FC<Props> = ({ onLoad, currentBrief, disabled = f
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-      <div>
-        <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>
-          Quick Load Demo Brief
-        </label>
-        <select
-          defaultValue=""
-          onChange={(e) => {
-            const demo = DEMO_BRIEFS.find((d) => d.title === e.target.value);
-            if (demo) {
-              setBrief(demo.content);
-              onLoad(demo.content);
-            }
-          }}
-          disabled={disabled}
-          style={{
-            width: "100%",
-            padding: "0.5rem",
-            fontSize: "0.9rem",
-            borderRadius: "4px",
-            border: "1px solid #ccc",
-          }}
-        >
-          <option value="">-- Select a demo brief --</option>
-          {DEMO_BRIEFS.map((d) => (
-            <option key={d.title} value={d.title}>
-              {d.title}
-            </option>
+      <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+        <label style={{ display: "block", fontWeight: "bold" }}>Quick Briefs</label>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+          {BRIEF_TEMPLATES.map((template) => (
+            <button
+              key={template.title}
+              type="button"
+              onClick={() => {
+                setBrief(template.content);
+                onLoad(template.content);
+                onTemplateSelect?.(template.content, template.artifactType);
+              }}
+              disabled={disabled}
+              style={{
+                padding: "0.5rem 0.75rem",
+                borderRadius: "6px",
+                border: "1px solid #cbd5e1",
+                backgroundColor: "#f8fafc",
+                cursor: "pointer",
+                fontSize: "0.9rem",
+              }}
+            >
+              {template.title}
+            </button>
           ))}
-        </select>
+        </div>
       </div>
 
       <div>

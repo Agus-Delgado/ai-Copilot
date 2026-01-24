@@ -65,13 +65,15 @@ export async function generateArtifact(
   artifactType: ArtifactType,
   brief: string,
   signal?: AbortSignal
-): Promise<{ artifact: Artifact; raw: string }> {
+): Promise<{ artifact: Artifact; raw: string; prompt: string }> {
   let prompt = buildPrompt(artifactType, brief);
   let lastRaw = "";
   let lastErr = "";
+  let lastPrompt = prompt;
 
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
+      lastPrompt = prompt;
       const raw = await provider.complete(prompt, signal);
       lastRaw = raw;
 
@@ -86,7 +88,7 @@ export async function generateArtifact(
         throw new Error(`artifactType mismatch: expected ${artifactType}, got ${validated.artifactType}`);
       }
 
-      return { artifact: validated, raw };
+      return { artifact: validated, raw, prompt: lastPrompt };
     } catch (e: unknown) {
       const errMsg =
         e instanceof ZodError
@@ -105,7 +107,9 @@ export async function generateArtifact(
       ? `${lastRaw.slice(0, OUTPUT_PREVIEW_LENGTH)}...`
       : lastRaw;
 
-  throw new Error(
+  const error = new Error(
     `Failed to generate valid ${artifactType} after 2 repairs. Last error: ${lastErr}. Last output (truncated): ${truncated}`
   );
+  (error as Error & { prompt?: string }).prompt = lastPrompt;
+  throw error;
 }

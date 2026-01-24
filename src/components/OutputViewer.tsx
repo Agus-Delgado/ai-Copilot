@@ -1,14 +1,35 @@
-import React, { useState } from "react";
+import React from "react";
 import { toMarkdown, toJson } from "../lib/export/markdownExport";
 import type { Artifact } from "../lib/schemas/artifacts";
 
 interface Props {
   artifact: Artifact | null;
   error: string | null;
+  loading: boolean;
+  tab: "json" | "markdown";
+  onTabChange: (tab: "json" | "markdown") => void;
 }
 
-export const OutputViewer: React.FC<Props> = ({ artifact, error }) => {
-  const [tab, setTab] = useState<"json" | "markdown">("json");
+export const OutputViewer: React.FC<Props> = ({ artifact, error, loading, tab, onTabChange }) => {
+  if (loading) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "0.75rem",
+          padding: "1rem",
+          backgroundColor: "#f8fafc",
+          borderRadius: "8px",
+          border: "1px solid #e2e8f0",
+        }}
+      >
+        <div style={{ height: "14px", width: "160px", backgroundColor: "#e2e8f0", borderRadius: "6px", animation: "pulse 1.5s ease-in-out infinite" }} />
+        <div style={{ height: "120px", backgroundColor: "#e2e8f0", borderRadius: "6px", animation: "pulse 1.5s ease-in-out infinite" }} />
+        <div style={{ color: "#475569", fontWeight: 600 }}>Generating…</div>
+      </div>
+    );
+  }
 
   if (error) {
     return (
@@ -33,8 +54,8 @@ export const OutputViewer: React.FC<Props> = ({ artifact, error }) => {
 
   if (!artifact) {
     return (
-      <div style={{ padding: "2rem", textAlign: "center", color: "#999" }}>
-        Generate an artifact to see output here
+      <div style={{ padding: "2rem", textAlign: "center", color: "#64748b" }}>
+        No output yet. Generate an artifact to view JSON or Markdown.
       </div>
     );
   }
@@ -48,7 +69,7 @@ export const OutputViewer: React.FC<Props> = ({ artifact, error }) => {
     <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
       <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem", borderBottom: "1px solid #ddd" }}>
         <button
-          onClick={() => setTab("json")}
+          onClick={() => onTabChange("json")}
           style={{
             padding: "0.5rem 1rem",
             backgroundColor: tab === "json" ? "#0066cc" : "#f0f0f0",
@@ -62,7 +83,7 @@ export const OutputViewer: React.FC<Props> = ({ artifact, error }) => {
           JSON
         </button>
         <button
-          onClick={() => setTab("markdown")}
+          onClick={() => onTabChange("markdown")}
           style={{
             padding: "0.5rem 1rem",
             backgroundColor: tab === "markdown" ? "#0066cc" : "#f0f0f0",
