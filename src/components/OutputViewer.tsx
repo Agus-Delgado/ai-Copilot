@@ -268,7 +268,7 @@ export const OutputViewer: React.FC<Props> = ({ artifact, error, loading, tab, o
 
       {!hasOutput ? (
         <div
-          style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", color: "#999", marginBottom: "1rem" }}
+          style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", color: "#334155", marginBottom: "1rem" }}
           role="tabpanel"
           id={activePanelId}
           aria-labelledby={activeTabId}

@@ -6,6 +6,20 @@
   color: var(--color-text);
 }
 
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 8px;
+  background: #0ea5e9;
+  color: #ffffff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+}
+.skip-link:focus {
+  top: 8px;
+}
+
 .app-header {
   background: var(--color-primary);
   color: #ffffff;

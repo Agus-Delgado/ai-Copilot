@@ -10,10 +10,11 @@ interface Props {
 export const ArtifactSelector: React.FC<Props> = ({ value, onChange, disabled = false }) => {
   return (
     <div style={{ marginBottom: "1rem" }}>
-      <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>
+      <label htmlFor="artifactType" style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>
         Artifact Type
       </label>
       <select
+        id="artifactType"
         value={value}
         onChange={(e) => onChange(e.target.value as ArtifactType)}
         disabled={disabled}

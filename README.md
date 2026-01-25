@@ -98,6 +98,9 @@ Detalles: ver `docs/SECURITY.md`.
 - `docs/SECURITY.md`
 - `docs/EXPORT_TEMPLATES.md`
  - `CONTRIBUTING.md`
+ - `docs/FAQ.md`
+ - `docs/DECISIONS.md`
+ - `docs/LIGHTHOUSE.md`
 
 ## Licencia
 MIT — ver `LICENSE`.

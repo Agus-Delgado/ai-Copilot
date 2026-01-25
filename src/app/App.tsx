@@ -217,6 +217,7 @@ export const App: React.FC = () => {
 
   return (
     <div className="app-shell">
+      <a href="#main-content" className="skip-link">Skip to content</a>
       {/* Header */}
       <header className="app-header">
         <h1 className="app-title">AI Delivery Copilot</h1>
@@ -240,6 +241,7 @@ export const App: React.FC = () => {
       </header>
 
       {/* Main content */}
+      <main id="main-content" role="main">
       <div className={`main ${isNarrow ? "main--stacked" : ""}`}>
         {isNarrow && (
           <div className="mobile-tabs" role="tablist" aria-label="Input and Output tabs">
@@ -393,6 +395,7 @@ export const App: React.FC = () => {
           )}
         </section>
       </div>
+      </main>
 
       {/* Provider Config Modal */}
       {configOpen && <ProviderConfig onClose={() => setConfigOpen(false)} />}
