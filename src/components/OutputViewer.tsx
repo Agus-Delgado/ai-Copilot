@@ -1,6 +1,7 @@
 import React from "react";
 import "./OutputViewer.css";
 import { toMarkdown, toJson } from "../lib/export/markdownExport";
+import { buildChecklist } from "../lib/quality/checklist";
 import type { Artifact } from "../lib/schemas/artifacts";
 
 interface Props {
@@ -12,6 +13,162 @@ interface Props {
 }
 
 export const OutputViewer: React.FC<Props> = ({ artifact, error, loading, tab, onTabChange }) => {
+  const [copied, setCopied] = React.useState<string | null>(null);
+  const showCopied = (msg: string) => {
+    setCopied(msg);
+    window.setTimeout(() => setCopied(null), 1500);
+  };
+  const buildJiraCopy = (): string => {
+    if (!artifact) return "";
+    if (artifact.artifactType === "Backlog") {
+      const parts: string[] = [];
+      parts.push("### Epic");
+      parts.push(`Epic: ${artifact.productArea}`);
+      parts.push(`Goal: ${artifact.epics[0]?.goal ?? "<WHAT_SUCCESS_LOOKS_LIKE>"}`);
+      parts.push(`Scope: <IN/OUT>`);
+      parts.push(`Risks: <TOP_3>`);
+      parts.push("");
+      parts.push("### Stories");
+      artifact.epics.forEach((e) => {
+        e.stories.forEach((s) => {
+          parts.push(`**Story:** ${s.title}`);
+          parts.push(`${s.userStory}`);
+          parts.push("");
+          parts.push("**Acceptance Criteria**");
+          s.acceptanceCriteria.forEach((ac) => {
+            parts.push(`- [ ] ${ac}`);
+          });
+          parts.push("");
+        });
+      });
+      return parts.join("\n");
+    }
+    const tpl: string[] = [];
+    tpl.push("### Epic");
+    tpl.push(`Epic: <EPIC_TITLE>`);
+    tpl.push(`Goal: <WHAT_SUCCESS_LOOKS_LIKE>`);
+    tpl.push(`Scope: <IN/OUT>`);
+    tpl.push(`Risks: <TOP_3>`);
+    tpl.push("");
+    tpl.push("### Stories");
+    tpl.push("**Story 1:** <TITLE>");
+    tpl.push("As a <persona> I want <need> so that <outcome>");
+    tpl.push("");
+    tpl.push("**Acceptance Criteria**");
+    tpl.push("- [ ] Given <context>, when <action>, then <expected>");
+    tpl.push("- [ ] Given <context>, when <action>, then <expected>");
+    return tpl.join("\n");
+  };
+  const buildGithubCopy = (): string => {
+    if (!artifact) return "";
+    const lines: string[] = [];
+    lines.push("### Title");
+    if (artifact.artifactType === "PRD") {
+      lines.push(artifact.title);
+      lines.push("");
+      lines.push("### Context");
+      lines.push(artifact.problemStatement);
+      lines.push("");
+      lines.push("### Requirements");
+      artifact.functionalRequirements.forEach((fr) => lines.push(`- [ ] ${fr.description}`));
+      lines.push("");
+      lines.push("### Acceptance Criteria");
+      lines.push("- [ ] Given <context>, when <action>, then <expected>");
+      lines.push("");
+      lines.push("### Definition of Done");
+      lines.push("- [ ] Docs updated (README/docs)");
+      lines.push("- [ ] Verified in Demo Mode");
+      return lines.join("\n");
+    }
+    if (artifact.artifactType === "Backlog") {
+      const epic = artifact.epics[0];
+      lines.push(epic?.title ?? artifact.productArea);
+      lines.push("");
+      lines.push("### Context");
+      lines.push(artifact.productArea);
+      lines.push("");
+      lines.push("### Requirements");
+      epic?.stories.forEach((s) => lines.push(`- [ ] ${s.title}`));
+      lines.push("");
+      lines.push("### Acceptance Criteria");
+      epic?.stories.forEach((s) => s.acceptanceCriteria.forEach((ac) => lines.push(`- [ ] ${ac}`)));
+      lines.push("");
+      lines.push("### Definition of Done");
+      lines.push("- [ ] Docs updated (README/docs)");
+      lines.push("- [ ] Verified in Demo Mode");
+      return lines.join("\n");
+    }
+    if (artifact.artifactType === "QAPack") {
+      lines.push(artifact.featureUnderTest);
+      lines.push("");
+      lines.push("### Context");
+      lines.push("QA Pack");
+      lines.push("");
+      lines.push("### Requirements");
+      artifact.checklist.forEach((c) => lines.push(`- [ ] ${c}`));
+      lines.push("");
+      lines.push("### Acceptance Criteria");
+      artifact.testCases[0]?.expectedResults.forEach((er) => lines.push(`- [ ] ${er}`));
+      lines.push("");
+      lines.push("### Definition of Done");
+      lines.push("- [ ] Docs updated (README/docs)");
+      lines.push("- [ ] Verified in Demo Mode");
+      return lines.join("\n");
+    }
+    if (artifact.artifactType === "RiskRegister") {
+      lines.push(artifact.context);
+      lines.push("");
+      lines.push("### Context");
+      lines.push(artifact.context);
+      lines.push("");
+      lines.push("### Requirements");
+      artifact.risks.forEach((r) => lines.push(`- [ ] ${r.risk}`));
+      lines.push("");
+      lines.push("### Acceptance Criteria");
+      lines.push("- [ ] Given <context>, when <action>, then <expected>");
+      lines.push("");
+      lines.push("### Definition of Done");
+      lines.push("- [ ] Docs updated (README/docs)");
+      lines.push("- [ ] Verified in Demo Mode");
+      return lines.join("\n");
+    }
+    if (artifact.artifactType === "CriticReport") {
+      lines.push(`Critic Report: ${artifact.summary}`);
+      lines.push("");
+      lines.push("### Context");
+      lines.push((artifact.ambiguities[0] ?? "<brief context / problem>"));
+      lines.push("");
+      lines.push("### Requirements");
+      artifact.recommendedNextSteps.forEach((s) => lines.push(`- [ ] ${s}`));
+      lines.push("");
+      lines.push("### Acceptance Criteria");
+      lines.push("- [ ] Given <context>, when <action>, then <expected>");
+      lines.push("");
+      lines.push("### Definition of Done");
+      lines.push("- [ ] Docs updated (README/docs)");
+      lines.push("- [ ] Verified in Demo Mode");
+      return lines.join("\n");
+    }
+    const tpl: string[] = [];
+    tpl.push("### Title");
+    tpl.push("<SHORT_ACTIONABLE_TITLE>");
+    tpl.push("");
+    tpl.push("### Context");
+    tpl.push("<brief context / problem>");
+    tpl.push("");
+    tpl.push("### Requirements");
+    tpl.push("- [ ] <req 1>");
+    tpl.push("- [ ] <req 2>");
+    tpl.push("");
+    tpl.push("### Acceptance Criteria");
+    tpl.push("- [ ] Given <context>, when <action>, then <expected>");
+    tpl.push("");
+    tpl.push("### Definition of Done");
+    tpl.push("- [ ] Output is schema-valid (if applicable)");
+    tpl.push("- [ ] Docs updated (README/docs)");
+    tpl.push("- [ ] Verified in Demo Mode");
+    return tpl.join("\n");
+  };
   if (loading) {
     return (
       <div
@@ -56,7 +213,10 @@ export const OutputViewer: React.FC<Props> = ({ artifact, error, loading, tab, o
   if (!artifact) {
     return (
       <div style={{ padding: "2rem", textAlign: "center", color: "#64748b" }}>
-        No output yet. Generate an artifact to view JSON or Markdown.
+        Generate an artifact to see the output here.
+        <div style={{ marginTop: "0.5rem", color: "#475569" }}>
+          Tip: enable Demo Mode in the header or use Quick Briefs for a fast start.
+        </div>
       </div>
     );
   }
@@ -148,7 +308,7 @@ export const OutputViewer: React.FC<Props> = ({ artifact, error, loading, tab, o
           onClick={() => {
             const content = tab === "json" ? jsonContent : mdContent;
             navigator.clipboard.writeText(content);
-            alert("Copied to clipboard!");
+            showCopied("Copied");
           }}
           style={{
             flex: 1,
@@ -161,6 +321,42 @@ export const OutputViewer: React.FC<Props> = ({ artifact, error, loading, tab, o
           }}
         >
           Copy to Clipboard
+        </button>
+        <button
+          onClick={() => {
+            const content = buildJiraCopy();
+            navigator.clipboard.writeText(content);
+            showCopied("Copied");
+          }}
+          style={{
+            flex: 1,
+            padding: "0.5rem",
+            backgroundColor: "#6f42c1",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+          }}
+        >
+          Copy for Jira
+        </button>
+        <button
+          onClick={() => {
+            const content = buildGithubCopy();
+            navigator.clipboard.writeText(content);
+            showCopied("Copied");
+          }}
+          style={{
+            flex: 1,
+            padding: "0.5rem",
+            backgroundColor: "#343a40",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+          }}
+        >
+          Copy for GitHub Issues
         </button>
         <button
           onClick={() => {
@@ -190,6 +386,71 @@ export const OutputViewer: React.FC<Props> = ({ artifact, error, loading, tab, o
           Download
         </button>
       </div>
+      <div aria-live="polite" style={{ marginTop: "0.5rem", color: "#0f766e", minHeight: "1.25rem" }}>{copied ? copied : ""}</div>
+      {artifact ? (
+        <div
+          style={{
+            marginTop: "0.75rem",
+            padding: "0.75rem",
+            border: "1px solid #e2e8f0",
+            borderRadius: "6px",
+            backgroundColor: "#f8fafc",
+          }}
+          aria-labelledby="qc-title"
+        >
+          <div id="qc-title" style={{ fontWeight: 600, color: "#0f172a", marginBottom: "0.5rem" }}>Quality Checklist</div>
+          {(() => {
+            const items = buildChecklist(artifact.artifactType, mdContent || "");
+            const missing = items.filter((i) => !i.ok);
+            return (
+              <>
+                <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "grid", gap: "0.25rem" }}>
+                  {items.map((i) => (
+                    <li
+                      key={i.key}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.5rem",
+                        padding: "0.25rem 0",
+                      }}
+                    >
+                      <span
+                        aria-label={i.ok ? "ok" : "missing"}
+                        style={{
+                          display: "inline-block",
+                          minWidth: "8px",
+                          minHeight: "8px",
+                          borderRadius: "50%",
+                          backgroundColor: i.ok ? "#16a34a" : "#dc2626",
+                        }}
+                      />
+                      <span style={{ flex: 1, color: "#334155" }}>{i.label}</span>
+                      <span style={{ color: i.ok ? "#16a34a" : "#dc2626", fontSize: "0.85rem" }}>{i.ok ? "ok" : "missing"}</span>
+                    </li>
+                  ))}
+                </ul>
+                {missing.length > 0 ? (
+                  <div style={{ marginTop: "0.5rem", display: "flex", justifyContent: "flex-end" }}>
+                    <a
+                      href="?type=CriticReport"
+                      style={{
+                        padding: "0.4rem 0.6rem",
+                        backgroundColor: "#0ea5e9",
+                        color: "white",
+                        borderRadius: "4px",
+                        textDecoration: "none",
+                      }}
+                    >
+                      Generate Critic Report
+                    </a>
+                  </div>
+                ) : null}
+              </>
+            );
+          })()}
+        </div>
+      ) : null}
     </div>
   );
 };

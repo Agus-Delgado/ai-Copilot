@@ -271,6 +271,11 @@ export const App: React.FC = () => {
             onLoad={setBrief}
             currentBrief={brief}
             disabled={loading}
+            onShortcut={() => {
+              if (!loading) {
+                void handleGenerate();
+              }
+            }}
             onTemplateSelect={(templateBrief, templateType) => {
               setArtifactType(templateType);
               setBrief(templateBrief);

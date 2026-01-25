@@ -7,9 +7,10 @@ interface Props {
   currentBrief: string;
   disabled?: boolean;
   onTemplateSelect?: (brief: string, artifactType: ArtifactType) => void;
+  onShortcut?: () => void;
 }
 
-export const BriefInput: React.FC<Props> = ({ onLoad, currentBrief, disabled = false, onTemplateSelect }) => {
+export const BriefInput: React.FC<Props> = ({ onLoad, currentBrief, disabled = false, onTemplateSelect, onShortcut }) => {
   const [brief, setBrief] = useState(currentBrief);
 
   useEffect(() => {
@@ -58,6 +59,15 @@ export const BriefInput: React.FC<Props> = ({ onLoad, currentBrief, disabled = f
         <textarea
           value={brief}
           onChange={handleTextChange}
+          onKeyDown={(e) => {
+            if (disabled) return;
+            const isEnter = e.key === "Enter";
+            const isShortcut = (e.ctrlKey || e.metaKey) && isEnter;
+            if (isShortcut) {
+              e.preventDefault();
+              onShortcut?.();
+            }
+          }}
           placeholder="Paste your unstructured requirements, notes, or brief here..."
           disabled={disabled}
           style={{
