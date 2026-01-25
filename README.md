@@ -7,6 +7,13 @@
 ## Demo (Live)
 - App: https://ai-copilot-wine-seven.vercel.app/
 - Repo: https://github.com/Agus-Delgado/ai-Copilot
+  
+## Probar en 60 segundos
+1. Abrí la demo (Live).
+2. Activá **Demo Mode** (sin API keys).
+3. Elegí un **Quick Brief** o pegá tu brief.
+4. Click en **Generate** y probá **Export** (Markdown/JSON).
+
 
 ## Qué resuelve
 Entre una idea (brief) y una especificación útil hay fricción: estructura, consistencia, criterios de aceptación, riesgos y calidad del output.
