@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   test: {
     globals: true,
-    environment: 'happy-dom',
+    environment: 'jsdom',
     environmentMatchGlobs: [
       ['tests/schemas.test.ts', 'node'],
       ['tests/generator.test.ts', 'node'],
@@ -17,7 +17,7 @@ export default defineConfig({
       ['tests/templates.test.ts', 'node'],
     ],
      pool: 'threads',
-    setupFiles: [],
+    setupFiles: ['./vitest.setup.ts'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'json-summary'],
