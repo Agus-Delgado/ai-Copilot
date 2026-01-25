@@ -1,3 +1,6 @@
+/**
+ * @vitest-environment node
+ */
 import { describe, it, expect } from "vitest";
 import { toMarkdown, toJson } from "../src/lib/export/markdownExport";
 import { MockProvider } from "../src/lib/llm/mockProvider";

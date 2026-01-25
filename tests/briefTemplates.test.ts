@@ -1,3 +1,6 @@
+/**
+ * @vitest-environment node
+ */
 import { describe, it, expect } from "vitest";
 import { BRIEF_TEMPLATES } from "../src/app/briefTemplates";
 

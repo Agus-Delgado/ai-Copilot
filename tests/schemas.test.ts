@@ -1,3 +1,6 @@
+/**
+ * @vitest-environment node
+ */
 import { describe, it, expect } from "vitest";
 import { ArtifactSchema, PRDSchema, BacklogSchema, RiskRegisterSchema, QAPackSchema, CriticReportSchema } from "../src/lib/schemas/artifacts";
 

@@ -1,3 +1,6 @@
+/**
+ * @vitest-environment node
+ */
 import { describe, it, expect } from "vitest";
 import { generateArtifact } from "../src/lib/llm/generator";
 import { MockProvider } from "../src/lib/llm/mockProvider";

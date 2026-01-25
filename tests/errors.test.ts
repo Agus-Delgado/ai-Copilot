@@ -1,3 +1,6 @@
+/**
+ * @vitest-environment node
+ */
 import { describe, it, expect } from "vitest";
 import { ValidationError, ProviderError, isValidationError, isProviderError } from "../src/lib/errors";
 import { z } from "zod";

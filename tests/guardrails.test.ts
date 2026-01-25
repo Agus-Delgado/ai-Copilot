@@ -1,3 +1,6 @@
+/**
+ * @vitest-environment node
+ */
 import { describe, it, expect } from "vitest";
 import { buildPrompt, buildRepairPrompt } from "../src/lib/prompts";
 
