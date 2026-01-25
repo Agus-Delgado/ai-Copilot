@@ -1,645 +1,97 @@
 # AI Delivery Copilot
 
-[![CI](https://github.com/Agus-Delgado/ai-delivery-copilot/actions/workflows/ci.yml/badge.svg)](https://github.com/Agus-Delgado/ai-delivery-copilot/actions/workflows/ci.yml)
+[![CI](https://github.com/Agus-Delgado/ai-Copilot/actions/workflows/ci.yml/badge.svg)](https://github.com/Agus-Delgado/ai-Copilot/actions/workflows/ci.yml)
 
-> Generador inteligente de artefactos de entrega. Transforma briefs desestructurados en documentación profesional con validación automática y reparación de esquemas. **Costo cero, sin backend, 100% estático.**
+> Generador de artefactos de entrega: convierte briefs desestructurados en documentación profesional (PRD, Backlog, QA Pack, Riesgos y Critic Report) con validación por esquema, repair loop y modo demo sin costo. 100% estático, sin backend.
 
----
+## Demo (Live)
+- App: https://ai-copilot-wine-seven.vercel.app/
+- Repo: https://github.com/Agus-Delgado/ai-Copilot
 
-## 📊 Resumen
+## Qué resuelve
+Entre una idea (brief) y una especificación útil hay fricción: estructura, consistencia, criterios de aceptación, riesgos y calidad del output.
+AI Delivery Copilot estandariza ese paso: genera artefactos listos para colaborar, exportar y reutilizar.
 
-**AI Delivery Copilot** es una aplicación web que acelera la generación de documentación técnica para proyectos de software. Toma un brief textual desestructurado (problema, contexto, requisitos) y genera automáticamente cinco tipos de artefactos profesionales, validados y exportables:
+## Para quién
+Product Managers, equipos ágiles, engineering leads y profesionales de portfolio que necesitan documentación clara y consistente sin invertir horas de redacción manual.
 
-- **PRD** (Requerimientos de Producto)
-- **Backlog** (Épicas, historias, criterios de aceptación)
-- **Risk Register** (Matriz de riesgos con mitigación)
-- **QA Pack** (Planes de testing con escenarios)
-- **Critic Report** (Análisis crítico y recomendaciones)
+## Qué podés generar
+- **PRD**: objetivos, alcance, requisitos, supuestos, métricas
+- **Backlog**: épicas, historias y criterios de aceptación
+- **QA Pack**: casos de prueba, escenarios, checklist
+- **Risk Register**: riesgos, probabilidad/impacto, mitigación
+- **Critic Report**: gaps, inconsistencias, recomendaciones
 
-**Para quién:** Product managers, ingenieros, equipos ágiles y profesionales en portafolio que necesitan documentación estructurada sin invertir horas en redacción manual.
+## Cómo funciona (alto nivel)
+1. Seleccionás un tipo de artefacto y pegás/escribís un brief.
+2. El generador construye el prompt con guardrails por tipo.
+3. La salida se valida con **Zod** (JSON estricto). Si falla, corre un **repair loop** (reintentos controlados).
+4. Exportás **JSON** (raw) o **Markdown** (formateado).
+5. Opcional: guardás en **History** (local) y compartís con **Share link** (sin backend).
 
-**Qué resuelve:** Elimina la fricción entre idea y especificación. Con soporte para proveedores LLM (Mock gratuito o BYOK con tu propia API), genera artefactos consistentes, reutilizables y listos para colaboración.
+## Modos de ejecución
+### Demo Mode (costo $0)
+- Corre 100% en el cliente con fixtures locales (sin API keys).
+- Ideal para probar, mostrar y hacer onboarding.
 
----
+### BYOK (Bring Your Own Key)
+- Compatible con endpoints OpenAI-like (p. ej. OpenAI, Deepseek, modelos locales con API compatible).
+- La API key se configura en UI y se guarda en `sessionStorage` (y opcionalmente `localStorage`), **nunca** se incluye en URLs.
 
-## 🎬 Demo
-
-```
-🚀 Demo en vivo: (próximamente)
-📘 Guía de inicio rápido: Ver README_MVP.md
-```
-
----
-
-## 🚀 Quick Start (sin API keys requeridas)
-
-### 1️⃣ Demo Mode: Genera artefactos al instante
-- **Sin costo.** Runs entirely client-side con fixtures locales.
-- Toggle **"Demo mode"** en el header.
-- Selecciona un tipo de artefacto (PRD, Backlog, etc.).
-- Haz clic en un **Quick Brief** template o escribe tu propio brief.
-- Haz clic en **"Generate"** → obtén JSON/Markdown al instante.
-
-### 2️⃣ Quick Briefs: Plantillas precargadas para acelerar onboarding
-- **SaaS RBAC PRD**, **Mobile Feedback Backlog**, **E2E QA Pack**, etc.
-- Un clic → pre-fill brief + selecciona artifact type automáticamente.
-- Edita después si quieres personalizarlo.
-
-### 3️⃣ BYOK: Integración opcional con tu LLM
-- Si quieres generar con **tu propio modelo** (OpenAI, Deepseek, local):
-  - Haz clic en **"⚙ Provider: Mock"** → configura BYOK.
-  - Pega tu API key y modelo endpoint.
-  - Cambia a **"BYOK"** y genera como de costumbre.
-- **Tu API key nunca sale de tu navegador** (sessionStorage, sin cifrado a nivel navegador).
-
-### 4️⃣ History: Gestiona tus generaciones
-- **Haz clic en "📋 History"** en el header para ver todas tus generaciones.
-- **View**: carga un artefacto anterior sin regenerar.
-- **Re-run**: regenera con los mismos inputs.
-- **Delete** / **Clear all**: gestiona tu historial.
-- **Storage privacy**: toggle "Store outputs" para guardar solo inputs (no outputs).
-- Auto-limpia a los 20 más recientes; historial persiste en tu navegador.
-
-### 5️⃣ Share: Colabora sin backend
-- **Haz clic en "Share link"** en Output para copiar una URL preconfigurada.
-- URL incluye: artifactType + brief + tab + demo flag.
-- **Sin secretos:** API keys nunca se incluyen en la URL.
-- Abre el link en otro navegador/dispositivo → se cargan todos los parámetros automáticamente.
-- Si el brief es muy largo para una URL segura, se excluye automáticamente.
-
----
-
-## ✨ Features principales
-
-- **5 tipos de artefactos** con esquemas JSON validados mediante Zod
-- **Generador con repair loop automático**: reintentos inteligentes (hasta 2) si la validación falla
-- **Demo Mode**: generación en cliente con fixtures locales, sin API keys ni costo
-- **Quick Briefs**: plantillas precargadas para acelerar onboarding
-- **Local History**: guarda últimas 20 generaciones, búsqueda, View/Re-run/Delete
-- **Shareable Links**: URL state sin secretos; preload app con brief + artifact type + demo flag
-- **Privacy toggle**: solo almacena inputs o inputs+outputs según preferencia
-- **BYOK (Bring Your Own Key)**: integración con cualquier proveedor OpenAI-compatible (OpenAI, Deepseek, local LLM)
-- **Exportación dual**: JSON estructurado + Markdown formateado por tipo
-- **UI minimalista funcional**: responsive 2-columnas, pestañas móviles, modal de configuración
-- **Accesibilidad**: tabs con ARIA semantics, focus-visible rings, keyboard navigation
-- **Testing completo**: Vitest con 35 tests (fixtures, history, history, a11y, URL state, etc.)
-- **100% estático**: deployable a Netlify, Vercel, GitHub Pages sin backend
-- **TypeScript stricto**: compilación sin errores, type-safe end-to-end
-
----
-
-## 🎯 Alcance del proyecto
-
-### ✅ Incluye
-
-- Generación de 5 tipos de artefactos con validación completa
-- Orquestación de generación con reintentos automáticos
-- Interfaz web responsiva con tabs móviles y pestañas de acceso
-- Sistema de exportación (JSON + Markdown)
-- **Demo Mode**: generación en cliente con fixtures locales, sin API keys ni costo
-- **Quick Briefs**: plantillas precargadas para acelerar onboarding
-- **Local History**: max 20 items, búsqueda, View/Re-run/Delete/Clear
-- **Privacy toggle**: opción de almacenar solo inputs
-- BYOK (Bring Your Own Key): dos proveedores LLM (Mock + BYOK)
-- Suite de tests unitarios y RTL (35 tests)
-- API keys en sessionStorage/localStorage (usuario configura en UI, sin cifrado a nivel navegador)
-- Manejo de errores con sugerencias contextuales
+## Features destacadas
+- 5 tipos de artefactos con esquemas Zod (validación estricta)
+- Repair loop automático ante outputs inválidos
+- Demo Mode sin costo (fixtures determinísticos)
+- Quick Briefs / templates para onboarding rápido
+- History local (últimas N ejecuciones) + privacidad (inputs-only opcional)
+- Shareable links: precarga estado (tipo/brief/tab/demo) sin exponer secretos
+- Export JSON/Markdown
 - Cancelación de requests (AbortController)
-- Semántica ARIA + keyboard navigation para accesibilidad
+- Tests (Vitest + React Testing Library) + CI
 
+## Captura / GIF (recomendado)
+Agregá un GIF corto (10–20s) del flujo completo en `docs/demo.gif` y referencialo aquí:
 
-### ❌ No incluye
-
-- Backend o base de datos (todo localStorage, sin servidor)
-- Autenticación / multi-usuario
-- Control de versiones de artefactos
-- Colaboración en tiempo real
-- Histórico en la nube (solo local)
-- CLI o integración en CI/CD
-- Soporte para otras plataformas LLM (p.ej., Anthropic, Google)
-
----
-
-## � Release Notes & Changelog
-
-### v0.5 - Validation Guardrails + Error UX (Current)
-- **Typed error system**: ValidationError and ProviderError classes for structured error handling
-- **Guardrails validation**: Per-artifact-type field requirements in prompts
-- **Error recovery**: Actionable error messages for API key, JSON, timeout, CORS, and model output failures
-- **Prompt debug panel**: View prompts and raw outputs for troubleshooting
-- **Repair loop**: Auto-retry on validation failures (up to 3 attempts)
-- **71 unit tests**: Full coverage of error flows and guardrails
-
-### v0.4 - Share Links & URL State
-- **Shareable URLs**: Safe URL encoding with 2000-char brief limit
-- **URL state persistence**: Artifact type, brief, tab, demo mode in params
-- **URL validation**: Silent fallbacks for malformed input
-- **15 utility tests**: Roundtrip validation of URL encode/decode
-
-### v0.3 - Local History & Re-run
-- **History panel**: View, re-run, delete, or clear past generations
-- **Storage caps**: 20-item history limit + 200KB max size (auto-eviction)
-- **Privacy toggle**: Option to store inputs only (no outputs)
-- **Header integration**: "📋 History (N)" button with toggle state
-
-### v0.2 - Demo Mode & Quick Briefs
-- **Mock provider**: 5 artifact types with realistic portfolio-grade fixtures
-- **Quick briefs**: Pre-filled templates for rapid onboarding
-- **Demo persistence**: Demo mode state saved to localStorage
-- **Test coverage**: 6 tests validating demo and template logic
-
-### v0.1 - UX Rhythm & Design System
-- **CSS design tokens**: Spacing, colors, typography, radius, shadow
-- **Responsive tabs**: Mobile-first layout with arrow key navigation
-- **ARIA semantics**: Full keyboard + screen reader accessibility
-- **Tab styling**: .ov-tabs and .ov-tab scoped components (no global changes)
-- **Accessibility tests**: 3 tests for tab semantics and keyboard nav
-
-### v0.0 - MVP Foundation
-- **Zero-cost baseline**: Lint, format, build, test scripts
-- **CI workflow**: Node 18/20 matrix with caching and concurrency
-- **ESLint + Prettier**: Code quality and formatting
-- **Vitest setup**: 35+ unit and RTL tests
-
----
-
-## �🏗️ Arquitectura
-### Arquitectura de datos: Mock → Validation → Export
-
-**AI Delivery Copilot** está construido alrededor de tres pilares principales:
-
-1. **Mock & Demo Mode**: Cliente completo sin backend
-   - MockProvider genera artefactos usando fixtures locales (PRD, Backlog, QAPack, RiskRegister, CriticReport)
-   - BYOK (Bring Your Own Key) acepta OpenAI o endpoints compatibles
-   - API keys almacenadas en sessionStorage (no en URL, no en historial)
-
-2. **Validation & Repair Loop**: Guardrails automáticos
-   - Prompts incluyen requisitos por tipo de artefacto
-   - Zod valida JSON contra esquemas estrictos
-   - En error: auto-retry hasta 3 intentos con repair prompt
-   - Errores estructurados (ValidationError, ProviderError) con recovery hints
-
-3. **Local History & Export**: Persistencia y portabilidad
-   - LocalStorage almacena últimas 20 generaciones + 200KB máximo
-   - Privacy toggle: inputs-only mode (sin outputs sensibles)
-   - Exporta a JSON (raw) o Markdown (formateado)
-   - Shareable URLs codifican estado sin exponer secretos
-### Flujo de datos
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                       Brief Input (UI)                          │
-│        (ArtifactSelector, BriefInput, Quick Briefs)             │
-└────────────────────────┬────────────────────────────────────────┘
-                         │
-                         ▼
-         ┌───────────────────────────────┐
-         │    generateArtifact()         │
-         │   (Generator Orchestrator)    │
-         │  + Retry Loop (max 3)         │
-         └────────┬────────────┬─────────┘
-                  │            │
-        ┌─────────▼──┐  ┌──────▼────────┐
-        │ Prompt     │  │ LLM Provider  │
-        │ Builder    │  │ Factory       │
-        │ (Guardrails)│ ├─ Mock         │
-        └────────────┘  ├─ BYOK         │
-                        └─ OpenAI-compat│
-                             │
-                         ┌───▼──────────────────┐
-                         │  JSON Extraction &   │
-                         │  Zod Validation      │
-                         │  (Repair on error)   │
-                         │  TypeError handling  │
-                         └───┬──────────────────┘
-                             │
-                        ┌────▼────────────┐
-                        │ Artifact JSON   │
-                        │ (Validated)     │
-                        └────┬────────────┘
-                             │
-              ┌──────────────▼──────────────┐
-              │    Export System            │
-              ├─ toMarkdown() (formatted)   │
-              ├─ toJson() (raw)             │
-              └────┬─────────────────────────┘
-                   │
-        ┌──────────┴────────────────────┐
-        ▼                               ▼
-   Output Viewer              History + Share URLs
-   (Tabs, Copy, Dwn)          (Store 20 items)
-   (Debug panel)              (Privacy toggle)
+```md
+![Demo](docs/demo.gif)
 ```
 
-### Componentes clave
-
-**Frontend (React)**
-- `App.tsx`: Orquestación principal, manejo de estado
-- `ArtifactSelector.tsx`: Selector de tipo de artefacto
-- `BriefInput.tsx`: Textarea + demos precargados
-- `GenerateButton.tsx`: Botón con loader, cancela requests
-- `OutputViewer.tsx`: Tabs JSON/Markdown, copiar, descargar
-- `ProviderConfig.tsx`: Modal para configurar BYOK
-
-**Backend (TypeScript / Lógica)**
-- `generator.ts`: Orquestador con repair loop
-- `providerFactory.ts`: Factory para instanciar proveedores
-- `byokProvider.ts`: Cliente OpenAI-compatible
-- `mockProvider.ts`: Respuestas determinísticas
-- `prompts/index.ts`: Construcción de prompts y repair prompts
-- `schemas/artifacts.ts`: Esquemas Zod para 5 artefactos
-- `export/markdownExport.ts`: Exportadores (Markdown + JSON)
-- `store.ts`: Zustand store para provider config
-
----
-
-## 🛠️ Tech Stack
-
-| Categoría | Tecnología | Versión |
-|-----------|-----------|---------|
-| **Framework** | React | 19.2.0 |
-| **Lenguaje** | TypeScript | ~5.9.3 |
-| **Build** | Vite | 7.2.4 |
-| **Validación** | Zod | 4.3.6 |
-| **State Management** | Zustand | 5.0.10 |
-| **Markdown Parsing** | Marked | 17.0.1 |
-| **Testing** | Vitest | 4.0.18 |
-| **Testing (React)** | @testing-library/react | 16.3.2 |
-| **Linting** | ESLint | 9.39.1 |
-| **Type Checking** | TypeScript strict | ✓ |
-
----
-
-## 📦 Instalación y ejecución local
-
-## 🔥 Smoke Test Checklist
-
-- Generar artefacto en modo Mock muestra output.
-- Cancelar muestra "Generation cancelled.".
-- Cambiar entre tabs JSON/Markdown funciona.
-- El panel de debug permite copiar el contenido.
-
----
-
-## 📝 Changelog (Stages 0–6)
-
-- Stage 0 — Baseline Quality
-     - Prettier + ESLint alineados, scripts `lint`, `lint:fix`, `format`, `format:check`.
-     - CI (Node 18/20) corre `npm ci`, `npm run lint`, `npm run test`, `npm run build`.
-     - README incluye smoke checklist.
-
-- Stage 1 — Rhythm & Design System
-     - Tokens CSS en `src/index.css` (spacing, colores, tipografía, radius, shadow).
-     - Layout consistente vía clases en `src/App.css` (sin estilos globales agresivos).
-     - Responsive: <900px usa tabs Input/Output.
-     - OutputViewer muestra Loading/Empty diferenciados.
-
-- Stage 2 — Demo Mode + Quick Briefs
-     - `demoMode` en `useStore` persistido en LocalStorage, toggle en header.
-     - Quick briefs en `src/app/briefTemplates.ts` + selección desde `BriefInput`.
-     - Mensajería: si falta key BYOK sugiere activar Demo mode.
-
-- Stage 3 — Local History + Re-run
-     - Historial en `useStore` con límite N=20 y cap ~200KB, eviction de antiguos.
-     - Toggle `persistOutputs`: si off, guarda solo inputs.
-     - `HistoryPanel` con búsqueda, View/Re-run/Delete/Clear.
-
-- Stage 4 — Share Links
-     - `Share link` copia URL con `artifactType`, `brief`, `tab` y `demo` (solo inputs).
-     - Al abrir con parámetros, precarga el estado.
-     - Parser robusto: ignora inválidos sin crash.
-
-- Stage 5 — Validación + Error UX
-     - Guardrails por tipo en prompts, mensajes de error accionables.
-     - Debug muestra el `prompt` enviado y permite copiarlo.
-
-- Stage 6 — Tests + CI Hardening
-     - Tests nuevos: history, templates y URL state (RTL). Mantiene suites existentes.
-     - CI matrix Node 18/20.
-
----
-
-## ▶️ Comandos útiles
+## Quick Start (local)
+Requisitos: Node.js 18+ y npm.
 
 ```bash
-# Lint
-npm run lint
-npm run lint:fix
-
-# Formato
-npm run format
-npm run format:check
-
-# Tests
-npm test
-
-# Build
-npm run build
-```
-
-### Requisitos previos
-
-- **Node.js** ≥ 18.x
-- **npm** ≥ 9.x
-
-### Pasos
-
-#### 1. Clonar el repositorio
-```bash
-git clone https://github.com/tu-usuario/ai-delivery-copilot.git
-cd ai-delivery-copilot
-```
-
-#### 2. Instalar dependencias
-```bash
+git clone https://github.com/Agus-Delgado/ai-Copilot.git
+cd ai-Copilot
 npm install
-```
-
-#### 3. Ejecutar en desarrollo
-```bash
 npm run dev
 ```
-Accede a `http://localhost:5173` en tu navegador.
 
-#### 4. Compilación de producción
-```bash
-npm run build
-```
-Output estático en `dist/`. Listo para desplegar a Netlify, Vercel, GitHub Pages.
-
----
-
-## 🚀 Deploy en Vercel
-
-### Pasos para desplegar
-
-#### 1. Conectar repositorio
-1. Ve a [Vercel Dashboard](https://vercel.com/dashboard)
-2. Haz clic en **"New Project"**
-3. Selecciona **"Import Git Repository"** y elige este repositorio (GitHub, GitLab, Bitbucket)
-
-#### 2. Configurar build
-Vercel detecta automáticamente que es un proyecto Vite + React. Verifica:
-
-| Campo | Valor |
-|-------|-------|
-| **Build Command** | `npm run build` |
-| **Output Directory** | `dist` |
-| **Install Command** | `npm install` |
-
-#### 3. Variables de entorno (opcional)
-Para BYOK, configura SOLO lo siguiente en Vercel Dashboard → Proyecto → **Settings** → **Environment Variables**:
-
-```
-VITE_LLM_PROVIDER=byok
-VITE_BYOK_API_BASE_URL=https://api.deepseek.com/v1
-VITE_BYOK_MODEL=deepseek-chat
-```
-
-⚠️ **IMPORTANTE:** NO agregues `VITE_BYOK_API_KEY` aquí. Las variables `VITE_*` se compilan en el bundle (públicas). En su lugar:
-1. El usuario configura la API key en la UI (ProviderConfig modal) después de desplegar
-2. Se almacena en sessionStorage/localStorage (no en servidor)
-3. Esto mantiene la key fuera del código y el bundle
-
-#### 4. Deploy
-Haz clic en **"Deploy"**. Vercel compilará y desplegará automáticamente (~2-3 minutos).
-
-### Redeploys automáticos
-- Cualquier push a `main` (o rama default) dispara un nuevo deploy
-- Los previews de PR se crean automáticamente para cada Pull Request
-
-### Verifica que funcione
-1. Accede a la URL asignada por Vercel
-2. Genera un artefacto con **Mock Provider** (default)
-3. Verifica que no haya errores en la consola (F12 → Console)
-
----
-
-## ⚙️ Configuración
-
-### Variables de entorno
-
-El proyecto funciona **sin configuración requerida** por defecto (modo Mock). Para usar BYOK (tu propia API), copia `.env.example` a `.env`:
-
-```bash
-cp .env.example .env
-```
-
-Edita los valores:
-
-```dotenv
-# Provider a usar: "mock" (gratuito) o "byok" (tu API)
-VITE_LLM_PROVIDER=mock
-
-# BYOK Settings (solo si VITE_LLM_PROVIDER=byok)
-VITE_BYOK_API_BASE_URL=https://api.deepseek.com/v1
-VITE_BYOK_API_KEY=sk_tu_clave_aqui
-VITE_BYOK_MODEL=deepseek-chat
-```
-
-**Valores soportados:**
-- `VITE_LLM_PROVIDER`: `"mock"` | `"byok"` (default: `"mock"`)
-- `VITE_BYOK_API_BASE_URL`: URL base compatible con OpenAI API (p.ej., Deepseek, local LLM)
-- `VITE_BYOK_API_KEY`: NO usar en .env (código es público); el usuario configura en la UI (ProviderConfig)
-- `VITE_BYOK_MODEL`: Nombre del modelo (p.ej., `deepseek-chat`, `gpt-4`)
-
-### Proveedores LLM
-
-#### Mock Provider (Gratuito)
-- **Costo:** $0
-- **Uso:** Desarrollo, demos, testing
-- **Comportamiento:** Respuestas determinísticas preconfiguradas
-- **Activación:** Por defecto o `VITE_LLM_PROVIDER=mock`
-
-#### BYOK Provider (Bring Your Own Key)
-- **Costo:** Según tu proveedor (OpenAI, Deepseek, etc.)
-- **Uso:** Producción, casos reales
-- **Compatible con:** OpenAI API v1 (OpenAI, Deepseek, LM Studio, Ollama local)
-- **Configuración:** Via UI (ProviderConfig modal); nunca hardcodear API keys en .env o variables
-- **Storage:** sessionStorage (sesión actual) y localStorage (opcional "recordar"), sin cifrado a nivel navegador
-
-**Flujo sin costo (desarrollo):**
-1. Inicia con Mock Provider (por defecto)
-2. Genera artefactos gratuitamente
-3. Cuando necesites modelos reales, configura BYOK con tu API key
-
----
-
-## 📋 Scripts disponibles
-
-```bash
-# Desarrollo
-npm run dev           # Inicia servidor Vite + hot reload
-npm run build         # Compila TypeScript + empaqueta (Vite)
-npm run preview       # Previsualiza producción localmente
-
-# Testing
-npm test              # Ejecuta tests una vez
-npm run test:watch   # Modo watch (rerun en cambios)
-npm run test:ui      # Interfaz web Vitest (recomendado)
-
-# Calidad de código
-npm run lint          # Verifica ESLint + TS strict mode
-```
-
----
-
-## 🧪 Testing y calidad
-
-### Cobertura
-
-**22 tests** distribuidos en 4 suites:
-- **apiKeyStorage.test.ts** (4 tests): Persistencia y lectura de API keys en sessionStorage/localStorage
-- **schemas.test.ts** (7 tests): Validación Zod para 5 tipos de artefactos + union discriminada
-- **generator.test.ts** (4 tests): Repair loop, extracción JSON, manejo de errores
-- **export.test.ts** (7 tests): Exportación Markdown/JSON por tipo
-
-### Ejecutar tests
-
-```bash
-# Una sola ejecución
-npm test
-
-# Watch mode (rerun en cambios)
-npm run test:watch
-
-# Interfaz web (recomendada)
-npm run test:ui
-# Abre http://localhost:51204 en navegador
-```
-
-### Linting
-
+## Scripts
 ```bash
 npm run lint
-# Verifica ESLint + TypeScript strict mode
+npm test
+npm run build
+npm run preview
 ```
 
-**Reglas:**
-- TypeScript `strict: true`
-- ESLint con soporte React 19
-- No tolerados: variables sin usar, tipos implícitos, etc.
+## Seguridad y privacidad (resumen)
+- Proyecto 100% estático: no hay backend ni DB remota.
+- **No** colocar `VITE_*_API_KEY` en Vercel/CI: las variables `VITE_*` se exponen en el bundle.
+- BYOK: la key queda en el navegador del usuario (session/local storage), nunca en el repo ni en URLs.
 
----
+Detalles: ver `docs/SECURITY.md`.
 
-## 🗺️ Roadmap
+## Documentación adicional
+- `CASE_STUDY.md`
+- `ROADMAP.md`
+- `docs/ARCHITECTURE.md`
+- `docs/CHANGELOG.md`
+- `docs/SECURITY.md`
 
-### Phase 1: MVP ✅ (Completada)
-- [x] Scaffolding Vite + React + TypeScript
-- [x] 5 tipos de artefactos con Zod
-- [x] Generator con repair loop
-- [x] Mock + BYOK providers
-- [x] UI minimalista (5 componentes)
-- [x] Testing (22 tests covering core modules)
+## Licencia
+MIT — ver `LICENSE`.
 
-### Phase 2: Mejoras UX (Próximas)
-- [ ] Editor de artefactos (editar campos post-generación)
-- [ ] Historial local (IndexedDB o localStorage)
-- [ ] Templates personalizados (pre-llenar campos)
-- [ ] Syntax highlighting en output (JSON/Markdown)
-- [ ] Dark mode / Light mode
-
-### Phase 3: Extensión de features
-- [ ] Más tipos de artefactos (OKRs, Test Plans, Technical Spec)
-- [ ] Soporte para Anthropic Claude API
-- [ ] Batch generation (múltiples briefs)
-- [ ] Colaboración básica (share URL con output)
-- [ ] API REST simple (para integraciones)
-
-### Phase 4: Enterprise (Futuro)
-- [ ] Autenticación + multi-usuario
-- [ ] Base de datos persistente (historia de generaciones)
-- [ ] Audit log
-- [ ] Custom models fine-tuning
-- [ ] SSO integración
-
----
-
-## 🤝 Contribución
-
-Este proyecto es de código abierto y las contribuciones son bienvenidas. Pasos recomendados:
-
-1. **Fork** el repositorio
-2. **Crea una rama** para tu feature (`git checkout -b feature/mi-feature`)
-3. **Commit tus cambios** (`git commit -m "Agregar mi feature"`)
-4. **Push a la rama** (`git push origin feature/mi-feature`)
-5. **Abre un Pull Request**
-
-### Reportar bugs
-
-Si encuentras un error, por favor abre un **Issue** con:
-- Descripción clara del problema
-- Pasos para reproducir
-- Versión de Node/npm
-- Logs relevantes
-
----
-
-## 📄 Licencia
-
-Este proyecto está bajo licencia **MIT**. Ver archivo `LICENSE` para detalles.
-
-> Si no existe licencia en el repositorio, agrega:
-> ```
-> MIT License (c) 2026 [Tu Nombre]
-> Permission is hereby granted, free of charge...
-> ```
-
----
-
-## 🙏 Créditos y agradecimientos
-
-- **Autor principal:** [Tu Nombre]
-- **Asistencia AI:** GitHub Copilot (Claude) para arquitectura, validación y testing
-- **Comunidad:** Inspiración en arquitecturas de Vite, Zod, Zustand
-- **Portfolio:** Este proyecto fue desarrollado como demostración de full-stack web development con TypeScript, React y validación robusta.
-
----
-
-## 📞 Contacto y soporte
-
-- 📧 Email: augusto.delgado00@hotmail.com
-- 🐙 GitHub: https://github.com/Agus-Delgado
-- 💼 LinkedIn: https://www.linkedin.com/in/agustin-delgado-data98615190/
-- 🌐 Portfolio: https://portfolio-virid-alpha-97.vercel.app/
-
----
-
-## 📋 Verificación pre-release
-
-**Checklist de validación:**
-
-- [ ] **Demo:** Agregue link a demo en vivo o aclarar "(próximamente)"
-- [ ] **Licencia:** Crear archivo `LICENSE` con MIT o tu opción
-- [ ] **API Keys ejemplo:** Validar que `.env.example` tiene valores seguros (no expuestos)
-- [ ] **Créditos:** Llenar [Tu Nombre] con autor real
-- [ ] **Contacto:** Actualizar email, GitHub, LinkedIn
-- [ ] **Tests:** Ejecutar `npm test` y confirmar que pasan
-- [ ] **Build:** Ejecutar `npm run build` y verificar `dist/` sin errores
-- [ ] **Lint:** Ejecutar `npm run lint` sin warnings
-- [ ] **README en GitHub:** Pushear esta versión a `main`
-- [ ] **Links:** Testear que todos los links internos funcionan
-- [ ] **TypeScript:** Confirmar `npm run build` compila sin errores TS
-
----
-
-**Última actualización:** Enero 24, 2026  
-**Versión:** 0.5.0 (Feature Complete MVP)  
-**Status:** ✅ Production-Ready (71 tests, CI hardened, zero-cost)
-**Node Support:** 18 LTS, 20 LTS (tested in CI)
-
----
-
-## 🏷️ Suggested Release Tags
-
-For portfolio and version tracking:
-
-```
-v0.1  = Baseline: Lint, format, tests, CI setup
-v0.2  = Demo mode: Mock provider, quick briefs  
-v0.3  = History: Local persistence, re-run, privacy toggle
-v0.4  = Share: URL state encoding, safe links
-v0.5  = Validation: Guardrails, error UX, prompt debug (current)
-v1.0  = (Future) Additional providers (Anthropic, Google)
-```
-
+## Contacto
+- LinkedIn: https://www.linkedin.com/in/agustin-delgado-data98615190/
+- GitHub: https://github.com/Agus-Delgado
+- Email: augusto.delgado00@hotmail.com
