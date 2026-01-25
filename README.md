@@ -7,6 +7,7 @@
 ## Demo (Live)
 - App: https://ai-copilot-wine-seven.vercel.app/
 - Repo: https://github.com/Agus-Delgado/ai-Copilot
+ - Tip: use Quick Briefs to see value immediately.
   
 ## Probar en 60 segundos
 1. Abrí la demo (Live).

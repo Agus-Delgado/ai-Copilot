@@ -49,7 +49,7 @@ describe("URL state load/share", () => {
 
     render(<App />);
 
-    const select = screen.getByRole("combobox") as HTMLSelectElement;
+    const select = screen.getByLabelText(/Artifact Type/i) as HTMLSelectElement;
     expect(select.value).toBe("Backlog");
 
     const textarea = screen.getByPlaceholderText(/Paste your unstructured requirements/i) as HTMLTextAreaElement;

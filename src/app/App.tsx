@@ -11,6 +11,10 @@ import { decodeUrlState, buildShareUrl } from "../lib/urlState";
 import { generateArtifact } from "../lib/llm/generator";
 import { createProvider } from "../lib/llm/providerFactory";
 import type { ArtifactType, Artifact } from "../lib/schemas/artifacts";
+import deliveryOpsSample from "../../docs/samples/delivery-ops.md?raw";
+import healthcareClinicSample from "../../docs/samples/healthcare-clinic.md?raw";
+import ecommerceGrowthSample from "../../docs/samples/ecommerce-growth.md?raw";
+import saasB2BSample from "../../docs/samples/saas-b2b.md?raw";
 
 export const App: React.FC = () => {
   const [artifactType, setArtifactType] = useState<ArtifactType>("PRD");
@@ -268,6 +272,64 @@ export const App: React.FC = () => {
           <h2 className="section-title">Generate Artifact</h2>
 
           <ArtifactSelector value={artifactType} onChange={setArtifactType} disabled={loading} />
+
+          <div style={{ display: "flex", alignItems: "flex-end", gap: "0.75rem", marginBottom: "0.75rem" }}>
+            <div style={{ flex: 1 }}>
+              <label htmlFor="quick-briefs" style={{ display: "block", fontWeight: "bold", marginBottom: "0.4rem" }}>
+                Quick Briefs
+              </label>
+              <select
+                id="quick-briefs"
+                disabled={loading}
+                value={"custom"}
+                onChange={(e) => {
+                  if (loading) return;
+                  const v = e.target.value;
+                  if (v === "custom") {
+                    setBrief("");
+                    return;
+                  }
+                  const map: Record<string, string> = {
+                    "delivery-ops": deliveryOpsSample,
+                    "healthcare-clinic": healthcareClinicSample,
+                    "ecommerce-growth": ecommerceGrowthSample,
+                    "saas-b2b": saasB2BSample,
+                  };
+                  const content = map[v] ?? "";
+                  setBrief(content);
+                }}
+                style={{
+                  width: "100%",
+                  padding: "0.5rem",
+                  fontSize: "1rem",
+                  borderRadius: "4px",
+                  border: "1px solid #ccc",
+                }}
+              >
+                <option value="custom">Custom</option>
+                <option value="delivery-ops">Delivery Ops</option>
+                <option value="healthcare-clinic">Healthcare Clinic</option>
+                <option value="ecommerce-growth">Ecommerce Growth</option>
+                <option value="saas-b2b">SaaS B2B</option>
+              </select>
+            </div>
+            <button
+              type="button"
+              disabled={loading}
+              onClick={() => setBrief("")}
+              style={{
+                padding: "0.5rem 0.75rem",
+                borderRadius: "6px",
+                border: "1px solid #cbd5e1",
+                backgroundColor: "#f8fafc",
+                cursor: "pointer",
+                fontSize: "0.9rem",
+                height: "2.5rem",
+              }}
+            >
+              Reset
+            </button>
+          </div>
 
           <BriefInput
             onLoad={setBrief}
