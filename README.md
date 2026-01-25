@@ -97,6 +97,7 @@ Detalles: ver `docs/SECURITY.md`.
 - `docs/CHANGELOG.md`
 - `docs/SECURITY.md`
 - `docs/EXPORT_TEMPLATES.md`
+ - `CONTRIBUTING.md`
 
 ## Licencia
 MIT — ver `LICENSE`.
