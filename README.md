@@ -49,10 +49,12 @@ Product Managers, equipos ágiles, engineering leads y profesionales de portfoli
 - Cancelación de requests (AbortController)
 - Tests (Vitest + React Testing Library) + CI
 
-## Captura / GIF (recomendado)
-Agregá un GIF corto (10–20s) del flujo completo en `docs/demo.gif` y referencialo aquí:
+## Captura / GIF 
+![Demo](docs/demo.gif)
 
+> Flujo rápido: Quick Brief → Generate → Critic Report → Export/Share (Demo Mode).
 ```md
+
 ![Demo](docs/demo.gif)
 ```
 
