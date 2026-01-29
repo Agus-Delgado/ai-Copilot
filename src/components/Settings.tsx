@@ -10,7 +10,7 @@ export const Settings: React.FC<Props> = ({ onClose }) => {
 
   return (
     <div
-        className="modal-backdrop"
+      className="modal-backdrop"
       style={{
         display: "flex",
         alignItems: "center",
@@ -21,8 +21,8 @@ export const Settings: React.FC<Props> = ({ onClose }) => {
       aria-labelledby="settings-title"
       aria-modal="true"
     >
-        className="modal-content"
       <div
+        className="modal-content"
         style={{
           minWidth: "400px",
           maxWidth: "600px",

@@ -7,13 +7,17 @@
 ## Demo (Live)
 - App: https://ai-copilot-wine-seven.vercel.app/
 - Repo: https://github.com/Agus-Delgado/ai-Copilot
- - Tip: use Quick Briefs to see value immediately.
-  
-## Probar en 60 segundos
-1. Abrí la demo (Live).
-2. Activá **Demo Mode** (sin API keys).
-3. Elegí un **Quick Brief** o pegá tu brief.
-4. Click en **Generate** y probá **Export** (Markdown/JSON).
+
+### One-Click Try Demo
+No sign-up, no API keys needed. Open the live app and click **"Try Demo"** to generate artifacts with pre-loaded fixtures. Perfect for portfolio demos and quick onboarding.
+
+**Dark Mode:**  Toggle theme in **Settings** (top-right) — persisted to local storage, respects system preference on first visit.
+
+## How to Demo in 60 Seconds
+1. **Open** https://ai-copilot-wine-seven.vercel.app/
+2. **Enable** Demo Mode in Settings (no API keys required)
+3. **Select** a Quick Brief or paste your own
+4. **Generate** → review artifact → **Export** as Markdown/JSON
 
 
 ## Qué resuelve
@@ -47,15 +51,16 @@ Product Managers, equipos ágiles, engineering leads y profesionales de portfoli
 - La API key se configura en UI y se guarda en `sessionStorage` (y opcionalmente `localStorage`), **nunca** se incluye en URLs.
 
 ## Features destacadas
-- 5 tipos de artefactos con esquemas Zod (validación estricta)
-- Repair loop automático ante outputs inválidos
-- Demo Mode sin costo (fixtures determinísticos)
-- Quick Briefs / templates para onboarding rápido
-- History local (últimas N ejecuciones) + privacidad (inputs-only opcional)
-- Shareable links: precarga estado (tipo/brief/tab/demo) sin exponer secretos
-- Export JSON/Markdown
-- Cancelación de requests (AbortController)
-- Tests (Vitest + React Testing Library) + CI
+- **5 artifact types** with strict Zod validation
+- **Repair loop**: automatic retry on invalid outputs
+- **Demo Mode**: zero-cost with deterministic fixtures (no API keys)
+- **Quick Briefs**: pre-built templates for instant value
+- **Dark Mode**: theme toggle + system preference detection + localStorage persistence
+- **History**: local storage of last N generations + privacy controls
+- **Share Links**: encode state (type/brief/output/mode) without exposing secrets
+- **Export**: JSON (raw) + Markdown (formatted)
+- **Request cancellation**: AbortController support
+- **Tests**: Vitest + React Testing Library + CI/CD
 
 ## Captura / GIF 
 ![Demo](docs/demo.gif)
@@ -83,6 +88,12 @@ npm test
 npm run build
 npm run preview
 ```
+
+## Zero-Cost Deployment
+- **100% static** frontend → free hosting on Vercel (or any CDN)
+- **No backend** required → no server costs
+- **No database** → all state stored in browser (localStorage/sessionStorage)
+- Demo Mode generates local fixtures → zero API calls for testing
 
 ## Seguridad y privacidad (resumen)
 - Proyecto 100% estático: no hay backend ni DB remota.
