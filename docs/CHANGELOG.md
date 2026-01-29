@@ -4,6 +4,11 @@
 - Docs pack (README v2 + Case Study + Roadmap + Security + Architecture)
 - CI workflow base (lint/test/build if present)
 
+## v0.1.1 (2026-01-25)
+- Added Quick Briefs selector and sample briefs for faster demo evaluation.
+- Accessibility and SEO improvements + Lighthouse documentation.
+- CI stability fixes for Vitest (setup, environments, lint).
+
 # Changelog
 
 ## v0.1.0 (2026-01-25)
@@ -16,5 +21,4 @@
 ## Unreleased
 - Copy-to templates in UI (Jira / GitHub Issues).
 - Quality checklist UI.
-
 

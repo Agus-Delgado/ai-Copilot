@@ -6,6 +6,8 @@ import { GenerateButton } from "../components/GenerateButton";
 import { HistoryPanel } from "../components/HistoryPanel";
 import { OutputViewer } from "../components/OutputViewer";
 import { ProviderConfig } from "../components/ProviderConfig";
+import { Settings } from "../components/Settings";
+import { Toast, type ToastMessage } from "../components/Toast";
 import { useStore } from "../lib/store";
 import { decodeUrlState, buildShareUrl } from "../lib/urlState";
 import { generateArtifact } from "../lib/llm/generator";
@@ -25,13 +27,16 @@ export const App: React.FC = () => {
   const [promptUsed, setPromptUsed] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [configOpen, setConfigOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [isNarrow, setIsNarrow] = useState(false);
   const [activePanel, setActivePanel] = useState<"input" | "output">("input");
   const [outputTab, setOutputTab] = useState<"json" | "markdown">("json");
+  const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   const abortRef = useRef<AbortController | null>(null);
   const requestIdRef = useRef(0);
+  const briefInputRef = useRef<HTMLTextAreaElement | null>(null);
 
   const {
     providerConfig,
@@ -106,6 +111,15 @@ export const App: React.FC = () => {
     }
 
     return { text, openConfig, inferredRaw };
+  };
+
+  const showToast = (message: string, variant: "success" | "error" = "success") => {
+    const id = `toast-${Date.now()}-${Math.random()}`;
+    setToasts((prev) => [...prev, { id, message, variant }]);
+  };
+
+  const dismissToast = (id: string) => {
+    setToasts((prev) => prev.filter((toast) => toast.id !== id));
   };
 
   const handleGenerate = async (nextBrief?: string, nextArtifactType?: ArtifactType) => {
@@ -213,10 +227,24 @@ export const App: React.FC = () => {
       const message = briefExcluded
         ? "Shareable link copied (brief too long to include)"
         : "Shareable link copied to clipboard";
-      alert(message);
+      showToast(message, "success");
     } catch {
-      alert("Could not copy link. Please copy manually: " + url);
+      showToast("Could not copy link. Please copy manually: " + url, "error");
     }
+  };
+
+  const handleTryDemo = () => {
+    setDemoMode(true);
+    setArtifactType("PRD");
+    setBrief(saasB2BSample);
+    setError(null);
+    setRawOutput(null);
+    setPromptUsed(null);
+    setArtifact(null);
+    setTimeout(() => {
+      briefInputRef.current?.focus();
+      if (isNarrow) setActivePanel("input");
+    }, 0);
   };
 
   return (
@@ -225,22 +253,39 @@ export const App: React.FC = () => {
       {/* Header */}
       <header className="app-header">
         <h1 className="app-title">AI Delivery Copilot</h1>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <label style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", fontWeight: 600 }}>
-            <input
-              type="checkbox"
-              checked={demoMode}
-              onChange={(e) => setDemoMode(e.target.checked)}
-              style={{ accentColor: "#0b63ce" }}
-            />
-            Demo mode
-          </label>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
+          <button 
+            className="header-button header-button--demo" 
+            onClick={handleTryDemo}
+            aria-label="Try demo with sample brief"
+          >
+            ✨ Try Demo
+          </button>
+          {demoMode && (
+            <div className="demo-badge">
+              <span className="demo-badge-text">Demo active</span>
+              <button
+                className="demo-badge-exit"
+                onClick={() => setDemoMode(false)}
+                aria-label="Exit demo mode"
+              >
+                Exit
+              </button>
+            </div>
+          )}
           <button className="header-button" onClick={() => setHistoryOpen(!historyOpen)}>
             📋 History ({history.length})
           </button>
-        <button className="header-button" onClick={() => setConfigOpen(true)}>
-          ⚙ Provider: {providerConfig.type === "mock" ? "Mock" : "BYOK"}
-        </button>
+          <button className="header-button" onClick={() => setConfigOpen(true)}>
+            ⚙ Provider: {providerConfig.type === "mock" ? "Mock" : "BYOK"}
+          </button>
+          <button 
+            className="header-button" 
+            onClick={() => setSettingsOpen(true)}
+            aria-label="Open settings"
+          >
+            ⚙ Settings
+          </button>
         </div>
       </header>
 
@@ -332,6 +377,7 @@ export const App: React.FC = () => {
           </div>
 
           <BriefInput
+            ref={briefInputRef}
             onLoad={setBrief}
             currentBrief={brief}
             disabled={loading}
@@ -461,6 +507,12 @@ export const App: React.FC = () => {
 
       {/* Provider Config Modal */}
       {configOpen && <ProviderConfig onClose={() => setConfigOpen(false)} />}
+
+      {/* Settings Modal */}
+      {settingsOpen && <Settings onClose={() => setSettingsOpen(false)} />}
+
+      {/* Toast Notifications */}
+      <Toast messages={toasts} onDismiss={dismissToast} />
     </div>
   );
 };

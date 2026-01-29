@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, forwardRef } from "react";
 import type { ArtifactType } from "../lib/schemas/artifacts";
 import { BRIEF_TEMPLATES } from "../app/briefTemplates";
 
@@ -10,7 +10,7 @@ interface Props {
   onShortcut?: () => void;
 }
 
-export const BriefInput: React.FC<Props> = ({ onLoad, currentBrief, disabled = false, onTemplateSelect, onShortcut }) => {
+export const BriefInput = forwardRef<HTMLTextAreaElement, Props>(({ onLoad, currentBrief, disabled = false, onTemplateSelect, onShortcut }, ref) => {
   const [brief, setBrief] = useState(currentBrief);
 
   useEffect(() => {
@@ -57,6 +57,7 @@ export const BriefInput: React.FC<Props> = ({ onLoad, currentBrief, disabled = f
           Your Brief (unstructured)
         </label>
         <textarea
+          ref={ref}
           value={brief}
           onChange={handleTextChange}
           onKeyDown={(e) => {
@@ -84,4 +85,4 @@ export const BriefInput: React.FC<Props> = ({ onLoad, currentBrief, disabled = f
       </div>
     </div>
   );
-};
+});
