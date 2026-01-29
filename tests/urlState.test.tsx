@@ -52,16 +52,22 @@ describe("URL state load/share", () => {
     const select = screen.getByLabelText(/Artifact Type/i) as HTMLSelectElement;
     expect(select.value).toBe("Backlog");
 
-    const textarea = screen.getByPlaceholderText(/Paste your unstructured requirements/i) as HTMLTextAreaElement;
+    const textarea = screen.getByPlaceholderText(
+      /Paste your unstructured requirements/i,
+    ) as HTMLTextAreaElement;
     expect(textarea.value).toContain("hello world");
 
-    const demoToggle = screen.getByLabelText(/Demo mode/i) as HTMLInputElement;
-    expect(demoToggle.checked).toBe(true);
+    // Demo mode indicator is now a badge in the header, not a checkbox.
+    expect(screen.getByText(/Demo active/i)).toBeInTheDocument();
+    // Alternatively, this is also stable:
+    // expect(screen.getByRole("button", { name: /Exit demo mode/i })).toBeInTheDocument();
 
     const shareButton = screen.getByText(/Share link/i);
     fireEvent.click(shareButton);
 
-    const clipboard = navigator.clipboard as unknown as { writeText: ReturnType<typeof vi.fn> };
+    const clipboard = navigator.clipboard as unknown as {
+      writeText: ReturnType<typeof vi.fn>;
+    };
 
     await waitFor(() => {
       expect(clipboard.writeText).toHaveBeenCalled();
