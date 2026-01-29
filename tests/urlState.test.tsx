@@ -57,13 +57,14 @@ describe("URL state load/share", () => {
     ) as HTMLTextAreaElement;
     expect(textarea.value).toContain("hello world");
 
-    // Demo mode indicator is now a badge in the header, not a checkbox.
+    // Demo indicator badge in header
     expect(screen.getByText(/Demo active/i)).toBeInTheDocument();
-    // Alternatively, this is also stable:
-    // expect(screen.getByRole("button", { name: /Exit demo mode/i })).toBeInTheDocument();
 
-    const shareButton = screen.getByText(/Share link/i);
-    fireEvent.click(shareButton);
+    // There may be multiple "Share link" buttons now (e.g., in empty state + header).
+    // Click the first matching button (the main Output header button).
+    const shareButtons = screen.getAllByRole("button", { name: /Share link/i });
+    expect(shareButtons.length).toBeGreaterThan(0);
+    fireEvent.click(shareButtons[0]);
 
     const clipboard = navigator.clipboard as unknown as {
       writeText: ReturnType<typeof vi.fn>;

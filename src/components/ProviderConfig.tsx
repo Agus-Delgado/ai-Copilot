@@ -40,10 +40,10 @@ export const ProviderConfig: React.FC<Props> = ({ onClose }) => {
 
   return (
     <div
+      className="modal-backdrop"
       style={{
         position: "fixed",
         inset: 0,
-        backgroundColor: "rgba(0,0,0,0.5)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -52,17 +52,15 @@ export const ProviderConfig: React.FC<Props> = ({ onClose }) => {
       onClick={onClose}
     >
       <div
+        className="modal-content"
         style={{
-          backgroundColor: "white",
-          borderRadius: "8px",
           padding: "2rem",
           minWidth: "400px",
           maxWidth: "600px",
-          boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 style={{ marginTop: 0, marginBottom: "1.5rem" }}>Provider Configuration</h2>
+        <h2 className="modal-title">Provider Configuration</h2>
 
         <div style={{ marginBottom: "1.5rem" }}>
           <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>
@@ -76,7 +74,9 @@ export const ProviderConfig: React.FC<Props> = ({ onClose }) => {
               padding: "0.5rem",
               fontSize: "0.9rem",
               borderRadius: "4px",
-              border: "1px solid #ccc",
+              border: "1px solid var(--color-border)",
+              background: "var(--color-surface)",
+              color: "var(--color-text)",
             }}
           >
             <option value="mock">Mock (deterministic for testing)</option>
@@ -100,7 +100,9 @@ export const ProviderConfig: React.FC<Props> = ({ onClose }) => {
                   padding: "0.5rem",
                   fontSize: "0.9rem",
                   borderRadius: "4px",
-                  border: "1px solid #ccc",
+                  border: "1px solid var(--color-border)",
+                  background: "var(--color-surface)",
+                  color: "var(--color-text)",
                   boxSizing: "border-box",
                 }}
               />
@@ -120,7 +122,9 @@ export const ProviderConfig: React.FC<Props> = ({ onClose }) => {
                   padding: "0.5rem",
                   fontSize: "0.9rem",
                   borderRadius: "4px",
-                  border: "1px solid #ccc",
+                  border: "1px solid var(--color-border)",
+                  background: "var(--color-surface)",
+                  color: "var(--color-text)",
                   boxSizing: "border-box",
                 }}
               />
@@ -138,7 +142,7 @@ export const ProviderConfig: React.FC<Props> = ({ onClose }) => {
               </label>
             </div>
 
-            <div style={{ fontSize: "0.9rem", color: "#444", marginBottom: "1.5rem" }}>
+            <div style={{ fontSize: "0.9rem", color: "var(--color-text-muted)", marginBottom: "1.5rem" }}>
               If you hit CORS, use a local proxy http://localhost:...
             </div>
 
@@ -156,7 +160,9 @@ export const ProviderConfig: React.FC<Props> = ({ onClose }) => {
                   padding: "0.5rem",
                   fontSize: "0.9rem",
                   borderRadius: "4px",
-                  border: "1px solid #ccc",
+                  border: "1px solid var(--color-border)",
+                  background: "var(--color-surface)",
+                  color: "var(--color-text)",
                   boxSizing: "border-box",
                 }}
               />
@@ -164,33 +170,9 @@ export const ProviderConfig: React.FC<Props> = ({ onClose }) => {
           </>
         )}
 
-        <div style={{ display: "flex", gap: "1rem", justifyContent: "flex-end" }}>
-          <button
-            onClick={onClose}
-            style={{
-              padding: "0.5rem 1rem",
-              backgroundColor: "#f0f0f0",
-              border: "1px solid #ccc",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSave}
-            style={{
-              padding: "0.5rem 1rem",
-              backgroundColor: "#0066cc",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-              fontWeight: "bold",
-            }}
-          >
-            Save
-          </button>
+        <div className="modal-actions">
+          <button onClick={onClose} className="button button--secondary">Cancel</button>
+          <button onClick={handleSave} className="button button--primary">Save</button>
         </div>
       </div>
     </div>

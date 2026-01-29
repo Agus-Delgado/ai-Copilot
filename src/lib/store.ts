@@ -2,6 +2,7 @@ import { create } from "zustand";
 import type { Artifact, ArtifactType } from "./schemas/artifacts";
 
 export type ProviderType = "mock" | "byok";
+export type Theme = "light" | "dark";
 
 export type ProviderConfig = {
   type: ProviderType;
@@ -15,6 +16,8 @@ interface Store {
   resetProviderConfig: () => void;
   demoMode: boolean;
   setDemoMode: (value: boolean) => void;
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
   persistOutputs: boolean;
   setPersistOutputs: (value: boolean) => void;
   history: HistoryEntry[];
@@ -25,6 +28,7 @@ interface Store {
 
 const STORAGE_KEY = "providerConfig";
 const DEMO_MODE_KEY = "demoModeEnabled";
+const THEME_KEY = "themePreference";
 const PERSIST_OUTPUTS_KEY = "persistOutputsEnabled";
 const HISTORY_KEY = "generationHistory";
 
@@ -98,6 +102,31 @@ function loadDemoMode(): boolean {
 function persistDemoMode(value: boolean) {
   try {
     localStorage.setItem(DEMO_MODE_KEY, value ? "true" : "false");
+  } catch {
+    // Ignore persistence errors.
+  }
+}
+
+function getSystemTheme(): Theme {
+  if (typeof window !== "undefined" && window.matchMedia) {
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  }
+  return "light";
+}
+
+function loadTheme(): Theme {
+  try {
+    const saved = localStorage.getItem(THEME_KEY);
+    if (saved === "light" || saved === "dark") return saved;
+    return getSystemTheme();
+  } catch {
+    return getSystemTheme();
+  }
+}
+
+function persistTheme(theme: Theme) {
+  try {
+    localStorage.setItem(THEME_KEY, theme);
   } catch {
     // Ignore persistence errors.
   }
@@ -182,6 +211,7 @@ function trimHistory(entries: HistoryEntry[]): HistoryEntry[] {
 export const useStore = create<Store>((set) => ({
   providerConfig: loadConfig(),
   demoMode: loadDemoMode(),
+  theme: loadTheme(),
   persistOutputs: loadPersistOutputs(),
   history: safeParseHistory(),
 
@@ -206,10 +236,13 @@ export const useStore = create<Store>((set) => ({
   },
 
   setDemoMode: (value: boolean) => {
-    set(() => {
-      persistDemoMode(value);
-      return { demoMode: value };
-    });
+    persistDemoMode(value);
+    set({ demoMode: value });
+  },
+
+  setTheme: (theme: Theme) => {
+    persistTheme(theme);
+    set({ theme });
   },
 
   setPersistOutputs: (value: boolean) => {
@@ -221,7 +254,7 @@ export const useStore = create<Store>((set) => ({
 
   addHistoryEntry: (entry: HistoryEntryInput) => {
     set((state) => {
-        const id = entry.id ?? generateId();
+      const id = entry.id ?? generateId();
       const createdAt = entry.createdAt ?? Date.now();
       const baseEntry: HistoryEntry = {
         id,

@@ -42,6 +42,7 @@ export const App: React.FC = () => {
     providerConfig,
     demoMode,
     setDemoMode,
+      theme,
     history,
     addHistoryEntry,
     deleteHistoryEntry,
@@ -49,6 +50,11 @@ export const App: React.FC = () => {
     persistOutputs,
     setPersistOutputs,
   } = useStore();
+
+  // Apply theme to root element
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 900px)");
@@ -254,8 +260,8 @@ export const App: React.FC = () => {
       <header className="app-header">
         <h1 className="app-title">AI Delivery Copilot</h1>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
-          <button 
-            className="header-button header-button--demo" 
+          <button
+            className="button button--primary header-button header-button--demo"
             onClick={handleTryDemo}
             aria-label="Try demo with sample brief"
           >
@@ -273,14 +279,14 @@ export const App: React.FC = () => {
               </button>
             </div>
           )}
-          <button className="header-button" onClick={() => setHistoryOpen(!historyOpen)}>
+          <button className="button button--ghost header-button" onClick={() => setHistoryOpen(!historyOpen)}>
             📋 History ({history.length})
           </button>
-          <button className="header-button" onClick={() => setConfigOpen(true)}>
+          <button className="button button--ghost header-button" onClick={() => setConfigOpen(true)}>
             ⚙ Provider: {providerConfig.type === "mock" ? "Mock" : "BYOK"}
           </button>
-          <button 
-            className="header-button" 
+          <button
+            className="button button--ghost header-button"
             onClick={() => setSettingsOpen(true)}
             aria-label="Open settings"
           >
@@ -316,6 +322,17 @@ export const App: React.FC = () => {
         <section className={`panel panel--input ${isNarrow && activePanel !== "input" ? "panel--hidden" : ""}`}>
           <h2 className="section-title">Generate Artifact</h2>
 
+          {/* Help Block */}
+          <div className="help-block">
+            <div className="help-block-title">🚀 Demo in 60 seconds</div>
+            <ol className="help-block-steps">
+              <li>Click <strong>Try Demo</strong> button (header)</li>
+              <li>Choose your <strong>Artifact Type</strong> below</li>
+              <li>Click <strong>Generate</strong></li>
+              <li>Share link or export as Markdown</li>
+            </ol>
+          </div>
+
           <ArtifactSelector value={artifactType} onChange={setArtifactType} disabled={loading} />
 
           <div style={{ display: "flex", alignItems: "flex-end", gap: "0.75rem", marginBottom: "0.75rem" }}>
@@ -348,7 +365,9 @@ export const App: React.FC = () => {
                   padding: "0.5rem",
                   fontSize: "1rem",
                   borderRadius: "4px",
-                  border: "1px solid #ccc",
+                  border: "1px solid var(--color-border)",
+                  background: "var(--color-surface)",
+                  color: "var(--color-text)",
                 }}
               >
                 <option value="custom">Custom</option>
@@ -362,15 +381,8 @@ export const App: React.FC = () => {
               type="button"
               disabled={loading}
               onClick={() => setBrief("")}
-              style={{
-                padding: "0.5rem 0.75rem",
-                borderRadius: "6px",
-                border: "1px solid #cbd5e1",
-                backgroundColor: "#f8fafc",
-                cursor: "pointer",
-                fontSize: "0.9rem",
-                height: "2.5rem",
-              }}
+              className="button button--secondary"
+              style={{ height: "2.5rem" }}
             >
               Reset
             </button>
@@ -397,7 +409,7 @@ export const App: React.FC = () => {
               <GenerateButton loading={loading} onClick={() => handleGenerate()} />
             </div>
             {loading && (
-              <button className="cancel-button" onClick={handleCancel}>
+              <button className="button button--danger cancel-button" onClick={handleCancel}>
                 Cancel
               </button>
             )}
@@ -413,72 +425,47 @@ export const App: React.FC = () => {
             <button
               type="button"
               onClick={handleShare}
-              style={{
-                padding: "0.5rem 0.75rem",
-                borderRadius: "var(--radius-6)",
-                border: "1px solid var(--color-border)",
-                background: "var(--color-surface)",
-                cursor: "pointer",
-                fontWeight: 600,
-              }}
+              className="button button--secondary"
             >
               Share link
             </button>
           </div>
-          <OutputViewer artifact={artifact} error={error} loading={loading} tab={outputTab} onTabChange={setOutputTab} />
+          <OutputViewer 
+            artifact={artifact} 
+            error={error} 
+            loading={loading} 
+            tab={outputTab} 
+            onTabChange={setOutputTab}
+            onTryDemo={handleTryDemo}
+            onOpenSettings={() => setSettingsOpen(true)}
+            onOpenDebug={() => {
+              const details = document.querySelector("details");
+              if (details) details.open = true;
+            }}
+          />
 
           <details style={{ marginTop: "1rem" }}>
             <summary style={{ cursor: "pointer", fontWeight: "bold" }}>Debug</summary>
             {rawOutput ? (
-              <div
-                style={{
-                  marginTop: "0.75rem",
-                  padding: "0.75rem",
-                  backgroundColor: "#f5f5f5",
-                  borderRadius: "4px",
-                  fontFamily: "monospace",
-                  fontSize: "0.85rem",
-                  whiteSpace: "pre-wrap",
-                  wordBreak: "break-word",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "0.75rem",
-                }}
-              >
+              <div className="debug-panel">
                 <div>{rawOutput.length > 2000 ? `${rawOutput.slice(0, 2000)}...` : rawOutput}</div>
                 {promptUsed && (
-                  <div style={{ backgroundColor: "#fff", border: "1px solid #e2e8f0", borderRadius: "6px", padding: "0.5rem" }}>
-                    <div style={{ fontWeight: 700, marginBottom: "0.35rem" }}>Prompt sent</div>
-                    <div style={{ maxHeight: 200, overflow: "auto" }}>{promptUsed}</div>
+                  <div className="debug-prompt">
+                    <div className="debug-prompt-title">Prompt sent</div>
+                    <div className="debug-prompt-content">{promptUsed}</div>
                   </div>
                 )}
-                <div style={{ display: "flex", gap: "0.5rem" }}>
+                <div className="debug-actions">
                   <button
                     onClick={() => navigator.clipboard.writeText(rawOutput)}
-                    style={{
-                      padding: "0.4rem 0.75rem",
-                      backgroundColor: "#0066cc",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "4px",
-                      cursor: "pointer",
-                      fontWeight: "bold",
-                    }}
+                    className="button button--secondary"
                   >
                     Copy Debug Output
                   </button>
                   {promptUsed && (
                     <button
                       onClick={() => navigator.clipboard.writeText(promptUsed)}
-                      style={{
-                        padding: "0.4rem 0.75rem",
-                        backgroundColor: "#0b63ce",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "4px",
-                        cursor: "pointer",
-                        fontWeight: "bold",
-                      }}
+                      className="button button--secondary"
                     >
                       Copy Prompt
                     </button>
@@ -486,7 +473,7 @@ export const App: React.FC = () => {
                 </div>
               </div>
             ) : (
-              <div style={{ marginTop: "0.5rem", color: "#666" }}>No debug output yet.</div>
+              <div className="debug-empty">No debug output yet.</div>
             )}
           </details>
 

@@ -35,3 +35,243 @@
   outline: 3px solid color-mix(in srgb, var(--color-primary) 60%, white);
   outline-offset: 2px;
 }
+
+.ov-loading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  padding: var(--space-16);
+  background: var(--color-surface);
+  border-radius: var(--radius-8);
+  border: 1px solid var(--color-border);
+}
+
+.ov-loading-bar {
+  height: 14px;
+  width: 160px;
+  background: var(--color-skeleton);
+  border-radius: var(--radius-6);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.ov-loading-block {
+  height: 120px;
+  background: var(--color-skeleton);
+  border-radius: var(--radius-6);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.ov-loading-text {
+  color: var(--color-text-secondary);
+  font-weight: 600;
+}
+
+.ov-error {
+  padding: var(--space-20);
+  border-radius: var(--radius-8);
+  border: 1px solid color-mix(in srgb, var(--color-danger) 45%, var(--color-border));
+  background: var(--color-danger-bg);
+  color: var(--color-text);
+}
+
+.ov-error-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-12);
+  margin-bottom: var(--space-16);
+}
+
+.ov-error-icon {
+  font-size: 1.5rem;
+}
+
+.ov-error-title {
+  display: block;
+  margin-bottom: var(--space-8);
+  color: var(--color-danger);
+}
+
+.ov-error-message {
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.ov-error-actions {
+  display: flex;
+  gap: var(--space-12);
+  flex-wrap: wrap;
+}
+
+.ov-empty {
+  padding: var(--space-32);
+  text-align: center;
+  background: var(--color-surface);
+  border-radius: var(--radius-8);
+  border: 1px solid var(--color-border);
+}
+
+.ov-empty-icon {
+  font-size: 2.5rem;
+  margin-bottom: var(--space-12);
+}
+
+.ov-empty-title {
+  margin: 0 0 var(--space-12);
+  color: var(--color-text);
+  font-size: 1.25rem;
+}
+
+.ov-empty-subtitle {
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-16);
+  line-height: 1.6;
+}
+
+.ov-empty-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 auto var(--space-16);
+  max-width: 320px;
+  text-align: left;
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  line-height: 1.8;
+}
+
+.ov-empty-cta {
+  min-width: 180px;
+}
+
+.ov-no-output {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-16);
+}
+
+.ov-output-wrap {
+  flex: 1;
+  overflow: auto;
+  margin-bottom: var(--space-16);
+  width: 100%;
+}
+
+.ov-output {
+  padding: var(--space-16);
+  background: var(--color-page);
+  border-radius: var(--radius-6);
+  font-size: var(--text-sm);
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0;
+  color: var(--color-text);
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--color-border);
+}
+
+.ov-output--json {
+  font-family: var(--font-mono);
+  line-height: 1.6;
+}
+
+.ov-output--markdown {
+  font-family: var(--font-sans);
+  line-height: 1.7;
+}
+
+.ov-actions {
+  display: flex;
+  gap: var(--space-8);
+  flex-wrap: wrap;
+}
+
+.ov-action {
+  flex: 1;
+  min-width: 140px;
+}
+
+.ov-copied {
+  margin-top: var(--space-8);
+  min-height: 1.25rem;
+  color: var(--color-success);
+  font-size: var(--text-sm);
+}
+
+.ov-quality {
+  margin-top: var(--space-12);
+  padding: var(--space-12);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-6);
+  background: var(--color-surface);
+}
+
+.ov-quality-title {
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--space-8);
+}
+
+.ov-quality-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--space-4);
+}
+
+.ov-quality-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  padding: var(--space-4) 0;
+}
+
+.ov-quality-dot {
+  display: inline-block;
+  min-width: 8px;
+  min-height: 8px;
+  border-radius: 50%;
+  background: var(--color-text-muted);
+}
+
+.ov-quality-dot.ok {
+  background: var(--color-success);
+}
+
+.ov-quality-dot.missing {
+  background: var(--color-danger);
+}
+
+.ov-quality-label {
+  flex: 1;
+  color: var(--color-text-secondary);
+}
+
+.ov-quality-status {
+  font-size: var(--text-sm);
+}
+
+.ov-quality-status.ok {
+  color: var(--color-success);
+}
+
+.ov-quality-status.missing {
+  color: var(--color-danger);
+}
+
+.ov-quality-actions {
+  margin-top: var(--space-8);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.ov-quality-link {
+  text-decoration: none;
+}

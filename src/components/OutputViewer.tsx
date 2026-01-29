@@ -10,9 +10,12 @@ interface Props {
   loading: boolean;
   tab: "json" | "markdown";
   onTabChange: (tab: "json" | "markdown") => void;
+  onTryDemo?: () => void;
+  onOpenSettings?: () => void;
+  onOpenDebug?: () => void;
 }
 
-export const OutputViewer: React.FC<Props> = ({ artifact, error, loading, tab, onTabChange }) => {
+export const OutputViewer: React.FC<Props> = ({ artifact, error, loading, tab, onTabChange, onTryDemo, onOpenSettings, onOpenDebug }) => {
   const [copied, setCopied] = React.useState<string | null>(null);
   const showCopied = (msg: string) => {
     setCopied(msg);
@@ -171,52 +174,66 @@ export const OutputViewer: React.FC<Props> = ({ artifact, error, loading, tab, o
   };
   if (loading) {
     return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "0.75rem",
-          padding: "1rem",
-          backgroundColor: "#f8fafc",
-          borderRadius: "8px",
-          border: "1px solid #e2e8f0",
-        }}
-      >
-        <div style={{ height: "14px", width: "160px", backgroundColor: "#e2e8f0", borderRadius: "6px", animation: "pulse 1.5s ease-in-out infinite" }} />
-        <div style={{ height: "120px", backgroundColor: "#e2e8f0", borderRadius: "6px", animation: "pulse 1.5s ease-in-out infinite" }} />
-        <div style={{ color: "#475569", fontWeight: 600 }}>Generating…</div>
+      <div className="ov-loading">
+        <div className="ov-loading-bar" />
+        <div className="ov-loading-block" />
+        <div className="ov-loading-text">Generating…</div>
       </div>
     );
   }
 
   if (error) {
+    const hasApiKeyError = error.toLowerCase().includes("api key");
+    const hasJsonError = error.toLowerCase().includes("json");
+
     return (
-      <div
-        style={{
-          padding: "1rem",
-          backgroundColor: "#fee",
-          color: "#c00",
-          borderRadius: "4px",
-          fontFamily: "monospace",
-          fontSize: "0.9rem",
-          whiteSpace: "pre-wrap",
-          wordBreak: "break-word",
-        }}
-      >
-        <strong>Error:</strong>
-        <br />
-        {error}
+      <div className="ov-error">
+        <div className="ov-error-header">
+          <span className="ov-error-icon" aria-hidden="true">⚠️</span>
+          <div className="ov-error-body">
+            <strong className="ov-error-title">Error</strong>
+            <div className="ov-error-message">{error}</div>
+          </div>
+        </div>
+        {(hasApiKeyError || hasJsonError || onOpenDebug) && (
+          <div className="ov-error-actions">
+            {hasApiKeyError && onOpenSettings && (
+              <button onClick={onOpenSettings} className="button button--danger-outline">
+                🛠️ Open Settings
+              </button>
+            )}
+            {hasJsonError && onOpenDebug && (
+              <button onClick={onOpenDebug} className="button button--danger-outline">
+                🔍 Open Debug
+              </button>
+            )}
+            {!hasApiKeyError && !hasJsonError && onOpenDebug && (
+              <button onClick={onOpenDebug} className="button button--danger-outline">
+                🔍 View Debug Info
+              </button>
+            )}
+          </div>
+        )}
       </div>
     );
   }
 
   if (!artifact) {
     return (
-      <div style={{ padding: "2rem", textAlign: "center", color: "#64748b" }}>
-        Generate an artifact to see the output here.
-        <div style={{ marginTop: "0.5rem", color: "#475569" }}>
-          Tip: enable Demo Mode in the header or use Quick Briefs for a fast start.
-        </div>
+      <div className="ov-empty">
+        <div className="ov-empty-icon" aria-hidden="true">📄</div>
+        <h3 className="ov-empty-title">No artifact generated yet</h3>
+        <p className="ov-empty-subtitle">Get started by generating your first artifact:</p>
+        <ul className="ov-empty-list">
+          <li>✨ Click <strong>Try Demo</strong> for a quick start</li>
+          <li>📋 Select a <strong>Quick Brief</strong> sample</li>
+          <li>✏️ Write your own custom brief</li>
+        </ul>
+        {onTryDemo && (
+          <button onClick={onTryDemo} className="button button--primary ov-empty-cta">
+            ✨ Try Demo Now
+          </button>
+        )}
       </div>
     );
   }
@@ -268,7 +285,7 @@ export const OutputViewer: React.FC<Props> = ({ artifact, error, loading, tab, o
 
       {!hasOutput ? (
         <div
-          style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", color: "#334155", marginBottom: "1rem" }}
+          className="ov-no-output"
           role="tabpanel"
           id={activePanelId}
           aria-labelledby={activeTabId}
@@ -277,48 +294,25 @@ export const OutputViewer: React.FC<Props> = ({ artifact, error, loading, tab, o
         </div>
       ) : (
         <div
-          style={{ flex: 1, overflow: "auto", marginBottom: "1rem", width: "100%" }}
+          className="ov-output-wrap"
           role="tabpanel"
           id={activePanelId}
           aria-labelledby={activeTabId}
         >
-          <pre
-            style={{
-              padding: "1rem",
-              backgroundColor: "#f5f5f5",
-              borderRadius: "4px",
-              fontSize: "0.85rem",
-              fontFamily: "monospace",
-              whiteSpace: "pre-wrap",
-              wordBreak: "break-word",
-              margin: 0,
-              color: "#0f172a",
-              opacity: 1,
-              width: "100%",
-              boxSizing: "border-box",
-            }}
-          >
+          <pre className={`ov-output ${tab === "json" ? "ov-output--json" : "ov-output--markdown"}`}>
             {currentContent}
           </pre>
         </div>
       )}
 
-      <div style={{ display: "flex", gap: "0.5rem" }}>
+      <div className="ov-actions">
         <button
           onClick={() => {
             const content = tab === "json" ? jsonContent : mdContent;
             navigator.clipboard.writeText(content);
             showCopied("Copied");
           }}
-          style={{
-            flex: 1,
-            padding: "0.5rem",
-            backgroundColor: "#28a745",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
+          className="button button--secondary ov-action"
         >
           Copy to Clipboard
         </button>
@@ -328,15 +322,7 @@ export const OutputViewer: React.FC<Props> = ({ artifact, error, loading, tab, o
             navigator.clipboard.writeText(content);
             showCopied("Copied");
           }}
-          style={{
-            flex: 1,
-            padding: "0.5rem",
-            backgroundColor: "#6f42c1",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
+          className="button button--secondary ov-action"
         >
           Copy for Jira
         </button>
@@ -346,15 +332,7 @@ export const OutputViewer: React.FC<Props> = ({ artifact, error, loading, tab, o
             navigator.clipboard.writeText(content);
             showCopied("Copied");
           }}
-          style={{
-            flex: 1,
-            padding: "0.5rem",
-            backgroundColor: "#343a40",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
+          className="button button--secondary ov-action"
         >
           Copy for GitHub Issues
         </button>
@@ -373,74 +351,43 @@ export const OutputViewer: React.FC<Props> = ({ artifact, error, loading, tab, o
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
           }}
-          style={{
-            flex: 1,
-            padding: "0.5rem",
-            backgroundColor: "#007bff",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
+          className="button button--primary ov-action"
         >
           Download
         </button>
       </div>
-      <div aria-live="polite" style={{ marginTop: "0.5rem", color: "#0f766e", minHeight: "1.25rem" }}>{copied ? copied : ""}</div>
+      <div aria-live="polite" className="ov-copied">{copied ? copied : ""}</div>
       {artifact ? (
         <div
-          style={{
-            marginTop: "0.75rem",
-            padding: "0.75rem",
-            border: "1px solid #e2e8f0",
-            borderRadius: "6px",
-            backgroundColor: "#f8fafc",
-          }}
+          className="ov-quality"
           aria-labelledby="qc-title"
         >
-          <div id="qc-title" style={{ fontWeight: 600, color: "#0f172a", marginBottom: "0.5rem" }}>Quality Checklist</div>
+          <div id="qc-title" className="ov-quality-title">Quality Checklist</div>
           {(() => {
             const items = buildChecklist(artifact.artifactType, mdContent || "");
             const missing = items.filter((i) => !i.ok);
             return (
               <>
-                <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "grid", gap: "0.25rem" }}>
+                <ul className="ov-quality-list">
                   {items.map((i) => (
                     <li
                       key={i.key}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.5rem",
-                        padding: "0.25rem 0",
-                      }}
+                      className="ov-quality-item"
                     >
                       <span
                         aria-label={i.ok ? "ok" : "missing"}
-                        style={{
-                          display: "inline-block",
-                          minWidth: "8px",
-                          minHeight: "8px",
-                          borderRadius: "50%",
-                          backgroundColor: i.ok ? "#16a34a" : "#dc2626",
-                        }}
+                        className={`ov-quality-dot ${i.ok ? "ok" : "missing"}`}
                       />
-                      <span style={{ flex: 1, color: "#334155" }}>{i.label}</span>
-                      <span style={{ color: i.ok ? "#16a34a" : "#dc2626", fontSize: "0.85rem" }}>{i.ok ? "ok" : "missing"}</span>
+                      <span className="ov-quality-label">{i.label}</span>
+                      <span className={`ov-quality-status ${i.ok ? "ok" : "missing"}`}>{i.ok ? "ok" : "missing"}</span>
                     </li>
                   ))}
                 </ul>
                 {missing.length > 0 ? (
-                  <div style={{ marginTop: "0.5rem", display: "flex", justifyContent: "flex-end" }}>
+                  <div className="ov-quality-actions">
                     <a
                       href="?type=CriticReport"
-                      style={{
-                        padding: "0.4rem 0.6rem",
-                        backgroundColor: "#0ea5e9",
-                        color: "white",
-                        borderRadius: "4px",
-                        textDecoration: "none",
-                      }}
+                      className="button button--primary ov-quality-link"
                     >
                       Generate Critic Report
                     </a>

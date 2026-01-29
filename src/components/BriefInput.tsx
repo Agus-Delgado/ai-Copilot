@@ -40,10 +40,11 @@ export const BriefInput = forwardRef<HTMLTextAreaElement, Props>(({ onLoad, curr
               style={{
                 padding: "0.5rem 0.75rem",
                 borderRadius: "6px",
-                border: "1px solid #cbd5e1",
-                backgroundColor: "#f8fafc",
+                border: "1px solid var(--color-border)",
+                backgroundColor: "var(--color-surface)",
                 cursor: "pointer",
                 fontSize: "0.9rem",
+                color: "var(--color-text)",
               }}
             >
               {template.title}
@@ -76,9 +77,11 @@ export const BriefInput = forwardRef<HTMLTextAreaElement, Props>(({ onLoad, curr
             minHeight: "300px",
             padding: "0.75rem",
             fontSize: "0.9rem",
-            fontFamily: "monospace",
+            fontFamily: "var(--font-mono)",
             borderRadius: "4px",
-            border: "1px solid #ccc",
+            border: "1px solid var(--color-border)",
+            background: "var(--color-surface)",
+            color: "var(--color-text)",
             resize: "vertical",
           }}
         />
