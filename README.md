@@ -1,4 +1,4 @@
-# AI Delivery Copilot
+# AI Delivery Copilot — A Paradise Module
 
 [![CI](https://github.com/Agus-Delgado/ai-Copilot/actions/workflows/ci.yml/badge.svg)](https://github.com/Agus-Delgado/ai-Copilot/actions/workflows/ci.yml)
 
@@ -19,6 +19,47 @@ No sign-up, no API keys needed. Open the live app and click **"Try Demo"** to ge
 3. **Select** a Quick Brief or paste your own
 4. **Generate** → review artifact → **Export** as Markdown/JSON
 
+## 🧠 Paradise Ecosystem
+
+**Paradise** is an AI-first ecosystem designed to host multiple intelligent tools focused on solving real-world business and operational problems through Artificial Intelligence.
+
+Rather than a single application, Paradise functions as a **modular platform**, where each product delivers a specific capability while sharing a common AI-driven philosophy:  
+**decision intelligence, automation, and productivity at scale.**
+
+Paradise solutions are built on:
+- Generative AI
+- Machine Learning
+- Deep Learning
+- Data-driven decision systems
+- Intelligent automation
+
+Each module can operate independently, but gains additional value as part of the broader Paradise ecosystem.
+
+### AI Delivery Copilot Role within Paradise
+
+**AI Delivery Copilot** is a core module within Paradise, focused on **Build & Delivery (Generative AI)**.
+
+It accelerates product delivery workflows by generating structured outputs such as:
+- PRDs and specs
+- Backlogs and user stories
+- QA packs and test scenarios
+- Documentation artifacts
+
+AI Delivery Copilot is designed as a standalone tool while also serving as a foundational productivity pillar of the Paradise ecosystem.
+
+### Paradise Capability Pillars (High-level)
+
+Paradise is structured around AI capability pillars, including:
+
+- **Ops & Decision Intelligence**  
+  Metrics, observability, alerts, and AI-assisted operational decisions.  
+  → *AtlasOps*
+
+- **Build & Delivery (Generative AI)**  
+  AI copilots for product development, documentation, backlog generation, and QA.  
+  → *AI Delivery Copilot*
+
+Additional modules and pillars may be introduced as the ecosystem evolves.
 
 ## Qué resuelve
 Entre una idea (brief) y una especificación útil hay fricción: estructura, consistencia, criterios de aceptación, riesgos y calidad del output.
