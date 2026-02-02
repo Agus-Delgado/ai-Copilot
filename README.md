@@ -103,14 +103,15 @@ Product Managers, equipos ágiles, engineering leads y profesionales de portfoli
 - **Request cancellation**: AbortController support
 - **Tests**: Vitest + React Testing Library + CI/CD
 
+## Tech Stack
+- **React + TypeScript + Vite**: fast dev experience, type safety, HMR
+- **Zod schema validation + repair loop**: strict output validation with automatic retry
+- **Vitest + React Testing Library + CI**: comprehensive test coverage with GitHub Actions
+
 ## Captura / GIF 
 ![Demo](docs/demo.gif)
 
 > Flujo rápido: Quick Brief → Generate → Critic Report → Export/Share (Demo Mode).
-```md
-
-![Demo](docs/demo.gif)
-```
 
 ## Quick Start (local)
 Requisitos: Node.js 18+ y npm.
@@ -136,6 +137,12 @@ npm run preview
 - **No database** → all state stored in browser (localStorage/sessionStorage)
 - Demo Mode generates local fixtures → zero API calls for testing
 
+## Limitaciones (scope)
+- **100% static**: no backend / no DB remota
+- **BYOK keys** stay in the user's browser (not stored server-side)
+- **Share links** encode state in URL (may get long depending on output)
+- **Not designed** for multi-user collaboration/auth (out of scope for now)
+
 ## Seguridad y privacidad (resumen)
 - Proyecto 100% estático: no hay backend ni DB remota.
 - **No** colocar `VITE_*_API_KEY` en Vercel/CI: las variables `VITE_*` se exponen en el bundle.
@@ -150,10 +157,10 @@ Detalles: ver `docs/SECURITY.md`.
 - `docs/CHANGELOG.md`
 - `docs/SECURITY.md`
 - `docs/EXPORT_TEMPLATES.md`
- - `CONTRIBUTING.md`
- - `docs/FAQ.md`
- - `docs/DECISIONS.md`
- - `docs/LIGHTHOUSE.md`
+- `CONTRIBUTING.md`
+- `docs/FAQ.md`
+- `docs/DECISIONS.md`
+- `docs/LIGHTHOUSE.md`
 
 ## Licencia
 MIT — ver `LICENSE`.
